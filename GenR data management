@@ -1,0 +1,404 @@
+################################################################################
+## Project: ECEC attendance and internalizing and externalizing behaviors in adolescence
+## Script purpose: GENR data management
+## Date: 01/13/2023
+## Author: Katharine M Barry
+## Email: katharine.barry@iplesp.upmc.fr
+################################################################################   
+
+#load libraries
+library(DSMolgenisArmadillo)
+library(dsBaseClient)
+library(dsHelper)
+library(DSI)
+library(DSOpal)
+
+
+
+#login to access data
+builder <- DSI::newDSLoginBuilder()
+builder$append(server = "generationR", 
+               url = "https://opal.erasmusmc.nl", user = "", 
+               password = "",
+               driver = "OpalDriver")
+test <- builder$build()
+conns <- datashield.login(logins = test, assign = TRUE)
+datashield.tables(conns)
+
+############## assign tables ###########################
+
+datashield.assign.table(
+  conns =   conns,
+  table = "lc_genr_outcome_1_2.1_1_outcome_yearly_rep_ KMB_MM _ECCNLC202037",
+  symbol = "gen_out")
+
+datashield.assign.table(
+  conns =   conns,
+  table = "lc_genr_core_2_2.2_1_core_yearly_rep_ KMB_MM _ECCNLC202037"  ,
+  symbol = "gen_core_rep")
+
+datashield.assign.table(
+  conns =   conns,
+  table = "lc_genr_core_2_2.2_1_core_non_rep_KMB_MM _ECCNLC202037" ,
+  symbol = "gen_core_non_rep")
+
+# check the columns in the non repeated data
+ds.colnames("gen_out", datasources = conns)
+# check columns of non repeated data
+ds.colnames("gen_core_rep", datasources = conns)
+# check the columns in the yearly repeated data
+ds.colnames("gen_core_non_rep", datasources = conns)
+
+#subset data until the child was 4 years of age because the childcare measure is up until 4 years of age
+
+ds.dataFrameSubset(
+  df.name = "gen_core_rep",
+  newobj = "gen_core_0_4",
+  V1.name = "gen_core_rep$age_years",
+  V2.name = "4",
+  Boolean.operator = "<=", datasources = conns
+)
+#verifying sub-setting 
+
+ds.colnames("gen_core_0_4", datasources=conns)
+
+#reshaping data into wide format
+ds.reShape(
+  data.name = "gen_core_0_4",
+  timevar.name = "age_years",
+  idvar.name = "child_id",
+  v.names = c( "childcarecentre_", "childcarerel_","childcareprof_","fam_splitup", "childcare_",       
+               "edu_f1_", "edu_m_", "famsize_child", "occup_f1_", "occup_m_", "famsize_adult"),
+  direction = "wide",
+  newobj = "gen_core_0_4_wide",
+  datasources = conns
+)
+
+# show the reshaped columns of the new data frame
+ds.colnames("gen_core_0_4_wide", datasources = conns)
+
+ds.merge(
+  x.name = "gen_out",
+  y.name = "gen_core_0_4_wide",
+  by.x.names = "child_id",
+  by.y.names = "child_id",
+  newobj = "df_gen",
+  datasources = conns
+)
+
+# merge the dataset with the non-repeated variables
+ds.merge(
+  x.name =  "df_gen",
+  y.name = "gen_core_non_rep",
+  by.x.names = "child_id",
+  by.y.names = "child_id",
+  newobj = "df_final",
+  datasources = conns
+)
+
+## ---- check the merged variables
+ds.colnames("df_final", datasources = conns)
+
+ds.table('df_final$int_eval_', datasources=conns)
+ds.table('df_final$ext_eval_', datasources=conns)
+
+# creating exposure variable
+###### childcare center variable will be coded into a dichotomise variable in which if a child was enrolled in child care at one point in time from age year 0  to age year 3 (including age year 3), they will be yes and if not, no ######
+
+################chilcare center attendance ############################
+
+#### checking each wave for childcarecenter measure:
+ds.table('df_final$childcarecentre_.0')
+ds.table('df_final$childcarecentre_.1')
+ds.table('df_final$childcarecentre_.2')
+ds.table('df_final$childcarecentre_.3')
+
+#childcare center years 0 years 1 years 2 and year 3 set to numeric value 
+ds.asNumeric('df_final$childcarecentre_.0', newobj='centre_0')
+ds.asNumeric('df_final$childcarecentre_.1', newobj='centre_1')
+ds.asNumeric('df_final$childcarecentre_.2', newobj='centre_2')
+ds.asNumeric('df_final$childcarecentre_.3', newobj='centre_3')
+
+###must replace the NA as 100 for later merge
+
+
+ds.replaceNA(x='centre_0', forNA =100, newobj="NAcentre_.0", datasources=conns)
+ds.replaceNA(x='centre_1', forNA =100, newobj="NAcentre_.1", datasources=conns)
+ds.replaceNA(x='centre_2', forNA =100, newobj="NAcentre_.2", datasources=conns)
+ds.replaceNA(x='centre_3', forNA =100, newobj="NAcentre_.3", datasources=conns)
+##verify it worked properly: ds.table('NAcentre_.0')
+
+
+###combine all the waves together in order to measure childcare attendance at one point in time
+ds.make(toAssign='NAcentre_.0 + NAcentre_.1+ NAcentre_.2 + NAcentre_.3', newobj = 'cen_care')
+ds.table ('cen_care', datasources=conns)# this variable shows us how many children attended childcare center in just one year, 
+#two years, or three years
+
+#now, going to dichotomize the variable to have yes/no for childcare attendance at one point in time
+##to understand the logic, 400 represents all missing, 300 means no childcare attendance in any years, 101 means childcare attendance at one point, etc
+ds.recodeValues(var.name='cen_care', 
+                values2replace.vector = 2,
+                new.values.vector = 1, newobj='centre_care1')
+ds.table('centre_care1',datasources=conns)
+ds.recodeValues(var.name='centre_care1', 
+                values2replace.vector = c(3,4,100,101,102),
+                new.values.vector = c(1,1,0,1,1), newobj='centre_care1')
+ds.table('centre_care1')
+ds.recodeValues(var.name='centre_care1', 
+                values2replace.vector = c(103,200,201,202,300),
+                new.values.vector = c(1,0,1,1,0), newobj='centre_care1')
+ds.table('centre_care1')
+ds.recodeValues(var.name='centre_care1', 
+                values2replace.vector = c(301,400),
+                new.values.vector = c(1,NA), newobj='centre_care')
+ds.table('centre_care')
+ds.table('cen_care')
+ds.dataFrame(x=c('df_final','centre_care', 'centre_0', 'centre_1', 'centre_2', 'centre_3', 'cen_care'), newobj='df_exp1')
+ds.summary('df_exp1')
+
+############ centre duration variable
+
+
+ds.recodeValues(var.name='cen_care',
+                values2replace.vector = c(0,100,200,300),
+                new.values.vector = c(0,0,0,0), newobj='centre_care1')
+ds.table('centre_care1')
+ds.recodeValues(var.name='centre_care1',
+                values2replace.vector = c(1,101,201,301),
+                new.values.vector = c(1,1,1,1), newobj='centre_care2')
+ds.table('centre_care2')
+ds.recodeValues(var.name='centre_care2',
+                values2replace.vector = c(2,202,102),
+                new.values.vector = c(2,2,2), newobj='centre_care3')
+ds.table('centre_care3')
+ds.recodeValues(var.name='centre_care3',
+                values2replace.vector = c(103,400),
+                new.values.vector = c(3,NA), newobj='cen_dur')
+ds.table('cen_dur')
+ds.table('centre_care')
+
+
+ds.asNumeric('cen_dur', newobj='dur_num')
+ds.recodeValues(var.name='dur_num',
+                values2replace.vector = c(0,1,2,3,4),
+                new.values.vector = c(0,1,1,2,2), newobj='cen_dur_cat')
+ds.asFactor('cen_dur_cat', newobj.name='f.cen_dur_cat')
+
+
+ds.dataFrame(x=c('df_exp1','cen_dur', 'f.cen_dur_cat'), newobj='df_1')
+
+
+datashield.workspace_save(conns = conns, ws = "genR_trajectoryexposure")
+
+
+################################################
+##covariate variable creation####################
+################################################# 
+
+#sibling position dichotomized into only child variable
+
+#re code only child versus other (note that 1 is equivalent to only child)
+ds.asNumeric("df_1$sibling_pos", newobj = "num_sib")
+ds.Boole(V1="num_sib", V2='1', Boolean.operator='==', numeric.output=TRUE, newobj="only_child")
+ds.table('only_child') 
+ds.table("df_1$sibling_pos")
+
+################################################ categorize father occupation into employed, unemployed, and other (year 0)
+################################################
+ds.asNumeric("df_1$occup_f1_.0", newobj='occ_num_f_0')
+ds.table('occ_num_f_0')
+
+#1 = Employed
+#2 = Self-employed 
+#3 = Unemployed
+#4 = Student, apprentice, student
+#5 = Domestic tasks (housewife etc. =
+#6 = Inactive/other (Receiving benefits or pension etc. =
+
+ds.recodeValues(var.name='occ_num_f_0', values2replace.vector = c(1,2,3,4,5,6), new.values.vector = c(1,1,0,2,2,2),newobj="emp_cat_dad_0")
+
+ds.table('emp_cat_dad_0') # 0=unemployed 1=employed 2=other
+## convert to a factor variable
+
+ds.asFactor('emp_cat_dad_0',newobj='femp_cat_dad_0')
+ds.table('femp_cat_dad_0')
+
+
+
+#### categorize mother occupation into employed, unemployed, and other (year 0)
+###################################################
+ds.asNumeric("df_1$occup_m_.0", newobj='occ_num_m_0')
+ds.table('occ_num_m_0')
+ds.recodeValues(var.name='occ_num_m_0', values2replace.vector = c(1,2,3,4,5,6), new.values.vector = c(1,1,0,2,2,2),newobj="emp_cat_mom_0")
+ds.table('emp_cat_mom_0') # 0=unemployed 1=employed 2=other
+## convert to a factor variable
+ds.asFactor('emp_cat_mom_0',newobj='femp_cat_mom_0')
+ds.table('femp_cat_mom_0')
+
+
+ds.asFactor('df_1$edu_f1_.0')
+ds.asFactor('df_1$edu_m_.0')
+ds.asFactor('df_1$edu_f1_.0')
+ds.asFactor('df_1$edu_m_.0')
+
+ds.table('df_1$edu_f1_.0')
+
+ds.dataFrame(x=c("df_1", "only_child",'femp_cat_dad_0', 'emp_cat_dad_0','femp_cat_mom_0','emp_cat_dad_0'), newobj='final')
+
+
+
+#save all coded variables
+ds.summary('final')
+
+datashield.workspace_save(conns = conns, ws = "genR_trajprep")
+conns <- DSI::datashield.login(logins = test, restore='genR_trajprep')
+ds.colnames('final')
+datashield.workspace_save(conns = conns, ws = "interactions")
+
+############ creating subsets for individuals that responded to exposure
+##########################################################
+##########################################################
+
+###   everyone that replied to child center outcome #####
+ds.table("final$centre_care")
+ds.dataFrameSubset(
+  df.name = "final",
+  newobj = "exposure_com",
+  V1.name = "final$centre_care",
+  V2.name = "0",
+  Boolean.operator = ">=", keep.NAs = FALSE, datasources = conns
+)
+ds.dim('exposure_com')
+ds.summary('exposure_com')
+
+###### subsetting two datasets for our complete case analysis 
+#############################################################
+#############################################################
+
+#creating subset data for internalizing behavior:
+ds.dataFrame(x=c('exposure_com$cen_dur', 'exposure_com$f.cen_dur_cat','exposure_com$fam_splitup.0','exposure_com$birth_weight', 'exposure_com$sex','exposure_com$int_age_','exposure_com$age_years','exposure_com$child_id','exposure_com$int_pc_','exposure_com$centre_care','exposure_com$agebirth_m_y','exposure_com$edu_m_.0','exposure_com$femp_cat_mom_0','exposure_com$only_child'), check.names=TRUE, stringsAsFactors = TRUE, completeCases=TRUE, newobj="dataint", datasources=conns)
+
+
+ds.summary('dataint')
+
+#need to subset so that all my outcomes come after my exposure variable
+ds.dataFrameSubset(
+  df.name = "dataint",
+  newobj = "dataint",
+  V1.name = "dataint$age_years",
+  V2.name = "4",
+  Boolean.operator = ">", datasources = conns
+)
+
+ds.summary('dataint') 
+ds.dim('dataint')
+
+#creating subset data for externalizing behavior
+ds.dataFrame(x=c('exposure_com$cen_dur', 'exposure_com$f.cen_dur_cat','exposure_com$fam_splitup.0','exposure_com$birth_weight','exposure_com$sex','exposure_com$ext_age_','exposure_com$age_years','exposure_com$child_id','exposure_com$ext_pc_','exposure_com$centre_care','exposure_com$agebirth_m_y','exposure_com$edu_m_.0','exposure_com$femp_cat_mom_0','exposure_com$only_child'), check.names=TRUE, stringsAsFactors = TRUE, completeCases=TRUE, newobj="dataext", datasources=conns)
+
+
+
+#need to subset so that all my outcomes come after my exposure variable
+ds.dataFrameSubset(
+  df.name = "dataext",
+  newobj = "dataext",
+  V1.name = "dataext$age_years",
+  V2.name = "4",
+  Boolean.operator = ">", datasources = conns
+)
+ds.summary('dataext') 
+ds.dim('dataext', datasources = conns)
+ds.dim('dataint', datasources = conns)
+
+
+datashield.workspace_save(conns = conns, ws = "lineardata")
+#############################
+#############################
+
+#descriptive tables analysis for internalizing behavior#
+conns <- DSI::datashield.login(logins = test, restore='lineardata')
+
+### placing dataset in the wide format in order to perform descriptive statistics
+## due to missingness in father characteristics, we focus primarily on mother's characteristics and family characteristics 
+ds.dim('dataint')
+ds.colnames('dataint')
+
+ds.reShape(
+  data.name = 'dataint',
+  v.names = c('int_age_', 'int_pc_'),
+  timevar.name = "age_years",
+  idvar.name = "child_id",
+  direction = 'wide',
+  newobj = "intdescriptive",
+  datasources = conns
+)
+
+
+ds.reShape(
+  data.name = 'dataext',
+  v.names = c('ext_age_', 'ext_pc_'),
+  timevar.name = "age_years",
+  idvar.name = "child_id",
+  direction = 'wide',
+  newobj = "extdescriptive",
+  datasources = conns
+)
+
+
+ds.dim('extdescriptive')
+ds.colnames('extdescriptive')
+
+### set all variables to appropriate class in internalizing behavior 
+ds.asFactor('dataint$centre_care', newobj.name='f.centre_care')
+ds.asNumeric('dataint$int_age_', newobj='n.int_age_')
+ds.asNumeric('dataint$age_years', newobj='n.age_years')
+ds.asNumeric('dataint$int_pc_', newobj='n.int_pc_')
+ds.asNumeric('dataint$agebirth_m_y', newobj='n.agebirth_m_y')
+ds.asNumeric('dataint$birth_weight', newobj='n.birth_weight')
+ds.asNumeric('dataint$child_id', newobj='n.child_id')
+ds.asFactor('dataint$only_child', newobj.name='f.only_child')
+ds.asFactor('dataint$sex', newobj.name='f.sex')
+ds.asFactor('dataint$edu_m_.0', newobj.name='f.edu_m_.0')
+ds.asFactor('dataint$femp_cat_mom_0', newobj.name='f.femp_cat_mom_0')
+ds.asFactor('dataint$fam_splitup.0', newobj.name='f.fam_splitup.0')
+ds.asNumeric('dataint$cen_dur', newobj='n.cen_dur')
+ds.dataFrame(x=c('dataint', 'n.cen_dur','f.fam_splitup.0', 'f.femp_cat_mom_0','f.centre_care','n.age_years', 'n.int_age_','n.int_pc_', 'n.agebirth_m_y', 'n.birth_weight', 'n.child_id', 'f.only_child', 'f.sex', 'f.edu_m_.0'), newobj = 'dataint')
+
+
+ds.colnames('dataint')
+
+### set all variables to appropriate class in externalizing behavior
+ds.asFactor('dataext$centre_care', newobj.name='f.centre_care')
+ds.asNumeric('dataext$ext_age_', newobj='n.ext_age_')
+ds.asNumeric('dataext$age_years', newobj='n.age_years')
+ds.asNumeric('dataext$ext_pc_', newobj='n.ext_pc_')
+ds.asNumeric('dataext$agebirth_m_y', newobj='n.agebirth_m_y')
+ds.asNumeric('dataext$birth_weight', newobj='n.birth_weight')
+ds.asNumeric('dataext$child_id', newobj='n.child_id')
+ds.asFactor('dataext$only_child', newobj.name='f.only_child')
+ds.asFactor('dataext$sex', newobj.name='f.sex')
+ds.asFactor('dataext$edu_m_.0', newobj.name='f.edu_m_.0')
+ds.asFactor('dataext$femp_cat_mom_0', newobj.name='f.femp_cat_mom_0')
+ds.asFactor('dataext$fam_splitup.0', newobj.name='f.fam_splitup.0')
+ds.asNumeric('dataext$cen_dur', newobj='n.cen_dur')
+
+
+ds.dataFrame(x=c('dataext', 'n.cen_dur','f.fam_splitup.0','f.femp_cat_mom_0','f.centre_care','n.age_years', 'n.ext_age_','n.ext_pc_', 'n.agebirth_m_y', 'n.birth_weight', 'n.child_id',  'f.only_child', 'f.sex', 'f.edu_m_.0'), newobj = 'dataext')
+
+ds.colnames('dataint')
+ds.colnames('dataext')
+ds.dim('dataint')
+ds.dim('dataext')
+
+datashield.workspace_save(conns = conns, ws = "ldata")
+
+
+
+
+
+
+
+
+
+
+
