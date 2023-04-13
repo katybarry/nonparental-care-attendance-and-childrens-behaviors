@@ -1,0 +1,544 @@
+
+
+#### internalizing crude anytime ECEC attendance 
+anytime.int.crude <- tibble(
+  age_bracket=c('5-6 years (N= 4584, 31.50%)',
+                '7-9 years (N= 8948, 26.60%)',
+                '10-12 years (N= 6440, 2.70%)',
+                '13-18 years (N= 292, 12.80%)'),
+  estimates=c(-1.00, -2.00, -1.62, -1.53),
+  low_ci=c(-2.09, -3.65, -5.33, -5.71),
+  high_ci=c(0.09, -.035, 2.09, 2.66),
+  p_value=c(0.07, 0.02,0.39, 0.47),
+  studies=c('4','5','5','3'),
+  heterogeneity=c(
+    'Q=2.81, df=3, p=0.42; I^2=0.0%, H^2=1.00',
+    'Q=5.78, df=4, p=0.22; I^2=30.7%, H^2=1.44',
+    'Q=5.64, df=4, p=0.23; I^2=30.2%, H^2=1.43',
+    'Q=1.42, df=2, p=0.49; I^2=0.0%, H^2=1.00'))
+
+png(
+  file = "internalizing crude anytime ECEC attendance.png",
+  width = 35,
+  height = 10,
+  units = "cm",
+  res = 300)
+par(mar=c(5,0,0,0))
+age_pos = -36
+est_pos = -17
+p_pos = -16
+het_pos = 15
+st_pos = 10
+height = 7
+
+forest(
+  x = anytime.int.crude %>% pull(estimates),
+  ci.lb = anytime.int.crude %>% pull(low_ci),
+  ci.ub = anytime.int.crude %>% pull(high_ci),
+  slab = anytime.int.crude %>% pull(age_bracket),
+  xlab = "Beta Coefficient (95% CI)",
+  ilab =  cbind(
+    anytime.int.crude %>% pull(p_value),
+    anytime.int.crude %>% pull(heterogeneity),
+    anytime.int.crude %>% pull(studies)),
+  textpos = c(age_pos, est_pos),
+  ilab.xpos = c(p_pos, het_pos, st_pos),
+  ilab.pos = 4,
+  cex = 0.8,
+  cex.axis = 0.8,
+  refline = 0,
+  xlim = c(-36.0, 28),
+  ylim = c(0, height),
+  alim = c(-10, 10),
+  steps = 3,
+  digits = c(2, 2),
+  psize = 1.2,
+  font = "arial")
+
+text(age_pos, height-1, "Age bracket (N attended ECEC, %)",font=2, cex = 0.8, pos = 4)
+text(est_pos, height-1, "Estimate [95% CI]", font=2, cex = 0.8, pos = 2)
+text(p_pos, height-1, "P-value",font=2, cex = 0.8, pos = 4)
+text(st_pos-2, height-1, "Number of studies",font=2, cex = 0.8, pos = 4)
+text(het_pos, height-1, "Heterogeneity",font=2, cex = 0.8, pos = 4)
+dev.off()
+
+#### internalizing adjusted anytime ECEC attendance 
+anytime.int.adj <- tibble(
+  age_bracket=c('5-6 years (N= 4584, 31.50%)',
+                '7-9 years (N= 8948, 26.60%)',
+                '10-12 years (N= 6440, 2.70%)',
+                '13-18 years (N= 292, 12.80%)'),
+  estimates=c(-0.66, -1.48, 1.28, -1.57),
+  low_ci=c(-1.75, -3.29, -3.57, -5.85),
+  high_ci=c(0.44, .34, 6.13, 2.71),
+  p_value=c(0.24, 0.11,0.60, 0.47),
+  studies=c('4','5','5','3'),
+  heterogeneity=c(
+    'Q=3.93, df=3, p=0.27; I^2=0.0%, H^2=1.00 ',
+    'Q=5.94, df=4, p=0.20; I^2=34.4%, H^2=1.53',
+    'Q=6.67, df=4, p=0.15; I^2=45.6%, H^2=1.84 ',
+    'Q=1.42, df=2, p=0.49; I^2=45.6%, H^2=1.00'))
+
+png(
+  file = "internalizing adjusted anytime ECEC attendance.png",
+  width = 35,
+  height = 10,
+  units = "cm",
+  res = 300)
+par(mar=c(5,0,0,0))
+age_pos = -36
+est_pos = -17
+p_pos = -16
+het_pos = 15
+st_pos = 10
+height = 7
+
+forest(
+  x = anytime.int.adj %>% pull(estimates),
+  ci.lb = anytime.int.adj %>% pull(low_ci),
+  ci.ub = anytime.int.adj %>% pull(high_ci),
+  slab = anytime.int.adj %>% pull(age_bracket),
+  xlab = "Beta Coefficient (95% CI)",
+  ilab =  cbind(
+    anytime.int.adj %>% pull(p_value),
+    anytime.int.adj %>% pull(heterogeneity),
+    anytime.int.adj %>% pull(studies)),
+  textpos = c(age_pos, est_pos),
+  ilab.xpos = c(p_pos, het_pos, st_pos),
+  ilab.pos = 4,
+  cex = 0.8,
+  cex.axis = 0.8,
+  refline = 0,
+  xlim = c(-36.0, 28),
+  ylim = c(0, height),
+  alim = c(-10, 10),
+  steps = 3,
+  digits = c(2, 2),
+  psize = 1.2,
+  font = "arial")
+
+text(age_pos, height-1, "Age bracket (N attended ECEC, %)",font=2, cex = 0.8, pos = 4)
+text(est_pos, height-1, "Estimate [95% CI]", font=2, cex = 0.8, pos = 2)
+text(p_pos, height-1, "P-value",font=2, cex = 0.8, pos = 4)
+text(st_pos-2, height-1, "Number of studies",font=2, cex = 0.8, pos = 4)
+text(het_pos, height-1, "Heterogeneity",font=2, cex = 0.8, pos = 4)
+dev.off()
+
+
+#### externalizing crude anytime ECEC attendance
+
+anytime.ext.crude <- tibble(
+  age_bracket=c('5-6 years (N= 4589, 31.50%)',
+                '7-9 years (N= 8931, 26.50%)',
+                '10-12 years (N= 5847, 26.40%)',
+                '13-18 years (N= 289, 12.80%)'),
+  estimates=c(-0.86, -1.93, -0.91, -1.51),
+  low_ci=c(-4.53, -3.11, -5.24, -5.49),
+  high_ci=c(2.81, -0.75, 3.42, 2.48),
+  p_value=c(0.07, 0.02,0.39, 0.47),
+  studies=c('4','5','5','3'),
+  heterogeneity=c(
+    'Q=9.70, df=3, p=0.02; I^2=81.6%, H^2=5.44',
+    'Q=5.29, df=4, p=0.26; I^2=11.7%, H^2=1.13',
+    'Q=6.96, df=4, p=0.14; I^2=43.9%, H^2=1.78',
+    'Q=0.22, df=2, p=0.89; I^2=0.0%, H^2=1.00'))
+
+png(
+  file = "externalizing crude anytime ECEC attendance.png",
+  width = 35,
+  height = 10,
+  units = "cm",
+  res = 300)
+par(mar=c(5,0,0,0))
+age_pos = -36
+est_pos = -17
+p_pos = -16
+het_pos = 15
+st_pos = 10
+height = 7
+
+forest(
+  x = anytime.ext.crude %>% pull(estimates),
+  ci.lb = anytime.ext.crude %>% pull(low_ci),
+  ci.ub = anytime.ext.crude %>% pull(high_ci),
+  slab = anytime.ext.crude %>% pull(age_bracket),
+  xlab = "Beta Coefficient (95% CI)",
+  ilab =  cbind(
+    anytime.ext.crude %>% pull(p_value),
+    anytime.ext.crude %>% pull(heterogeneity),
+    anytime.ext.crude %>% pull(studies)),
+  textpos = c(age_pos, est_pos),
+  ilab.xpos = c(p_pos, het_pos, st_pos),
+  ilab.pos = 4,
+  cex = 0.8,
+  cex.axis = 0.8,
+  refline = 0,
+  xlim = c(-36.0, 28),
+  ylim = c(0, height),
+  alim = c(-10, 10),
+  steps = 3,
+  digits = c(2, 2),
+  psize = 1.2,
+  font = "arial")
+
+text(age_pos, height-1, "Age bracket (N attended ECEC, %)",font=2, cex = 0.8, pos = 4)
+text(est_pos, height-1, "Estimate [95% CI]", font=2, cex = 0.8, pos = 2)
+text(p_pos, height-1, "P-value",font=2, cex = 0.8, pos = 4)
+text(st_pos-2, height-1, "Number of studies",font=2, cex = 0.8, pos = 4)
+text(het_pos, height-1, "Heterogeneity",font=2, cex = 0.8, pos = 4)
+dev.off()
+
+#### externalizing adjusted anytime ECEC attendance
+
+anytime.ext.adj <- tibble(
+  age_bracket=c('5-6 years (N= 4589, 31.50%)',
+                '7-9 years (N= 8931, 26.50%)',
+                '10-12 years (N= 5847, 26.40%)',
+                '13-18 years (N= 289, 12.80%)'),
+  estimates=c(-0.67, -0.88, 1.97, -0.53),
+  low_ci=c(-3.03, -2.59, -2.64, -4.59),
+  high_ci=c(4.38, 0.84, 6.57,3.53),
+  p_value=c(0.72, 0.31,0.40, 0.80),
+  studies=c('4','5','5','3'),
+  heterogeneity=c(
+    'Q=9.72, df=3, p=0.02; I^2=81.0%, H^2=5.27',
+    'Q=6.21, df=4, p=0.18; I^2=30.9%, H^2=1.45',
+    'Q=6.92, df=4, p=0.14; I^2=44.7%, H^2=1.81',
+    'Q=0.80, df=2, p=0.67; I^2=0.0%, H^2=1.00'))
+
+png(
+  file = "externalizing adjusted anytime ECEC attendance.png",
+  width = 35,
+  height = 10,
+  units = "cm",
+  res = 300)
+par(mar=c(5,0,0,0))
+age_pos = -36
+est_pos = -17
+p_pos = -16
+het_pos = 15
+st_pos = 10
+height = 7
+
+forest(
+  x = anytime.ext.adj %>% pull(estimates),
+  ci.lb = anytime.ext.adj  %>% pull(low_ci),
+  ci.ub = anytime.ext.adj %>% pull(high_ci),
+  slab = anytime.ext.adj %>% pull(age_bracket),
+  xlab = "Beta Coefficient (95% CI)",
+  ilab =  cbind(
+    anytime.ext.adj  %>% pull(p_value),
+    anytime.ext.adj %>% pull(heterogeneity),
+    anytime.ext.adj  %>% pull(studies)),
+  textpos = c(age_pos, est_pos),
+  ilab.xpos = c(p_pos, het_pos, st_pos),
+  ilab.pos = 4,
+  cex = 0.8,
+  cex.axis = 0.8,
+  refline = 0,
+  xlim = c(-36.0, 28),
+  ylim = c(0, height),
+  alim = c(-10, 10),
+  steps = 3,
+  digits = c(2, 2),
+  psize = 1.2,
+  font = "arial")
+
+text(age_pos, height-1, "Age bracket (N attended ECEC, %)",font=2, cex = 0.8, pos = 4)
+text(est_pos, height-1, "Estimate [95% CI]", font=2, cex = 0.8, pos = 2)
+text(p_pos, height-1, "P-value",font=2, cex = 0.8, pos = 4)
+text(st_pos-2, height-1, "Number of studies",font=2, cex = 0.8, pos = 4)
+text(het_pos, height-1, "Heterogeneity",font=2, cex = 0.8, pos = 4)
+dev.off()
+
+
+
+#### duration meta analysis code
+## internalizing crude 
+duration.int.crude <- tibble(
+  age_bracket=c('5-6 years (N= 3455,23.70%)',
+                '7-9 years (N=8479,25.20%)',
+                '10-12 years (N= 6 271, 26.32%)',
+                '13-18 years (N= 614, 9.88%)',
+                '5-6 years (N= 1129, 7.75%)',
+                '7-9 years (N= 469, 1.39%)',
+                '10-12 years (N= 167, 0.69%)'),
+  estimates=c(-0.21, -1.69, -0.33, -1.53, -5.11, -3.50, 1.90),
+  low_ci=c(-1.79, -3.58, -5.49, -5.71, -11.38, -7.39, -8.01),
+  high_ci=c(1.37,0.21,4.83, 2.66, 1.16, 0.39, 11.81),
+  p_value=c(0.79,0.08,0.90, 0.47, 0.11, 0.08, 0.71),
+  studies=c('4','5','5','3', '3', '3', '1'),
+  heterogeneity=c(
+    'Q=2.56, df=3, p=0.46; I^2=17.2%, H^2=1.21',
+    'Q=6.16, df=4, p=0.19; I^2=38.4%, H^2=1.62',
+    'Q=8.35, df=4, p=0.08; I^2=53.9%, H^2=2.17',
+    'Q=2.11, df=2, p=0.35; I^2=0.0%, H^2=1.00',
+    'Q=6.31, df=2, p=0.04; I^2=74.6%, H^2=3.93',
+    'Q=0.24, df=2, p=0.89; I^2=0.0%, H^2=1.00',
+    'NA'))
+
+png(
+  file = "internalizing crude duration ECEC attendance.png",
+  width = 50,
+  height = 12,
+  units = "cm",
+  res = 300)
+par(mar=c(5,0,0,0))
+age_pos = -36
+est_pos = -20
+p_pos = -19
+het_pos = 17
+st_pos = 15
+height = 12
+
+forest(
+  x = duration.int.crude %>% pull(estimates),
+  ci.lb = duration.int.crude %>% pull(low_ci),
+  ci.ub = duration.int.crude %>% pull(high_ci),
+  slab = duration.int.crude %>% pull(age_bracket),
+  rows=c(8:5,3:1),
+  xlab = "Beta Coefficient (95% CI)",
+  ilab =  cbind(
+    duration.int.crude %>% pull(p_value),
+    duration.int.crude %>% pull(heterogeneity),
+    duration.int.crude %>% pull(studies)),
+  textpos = c(age_pos, est_pos),
+  ilab.xpos = c(p_pos, het_pos, st_pos),
+  ilab.pos = 4,
+  cex = 0.8,
+  cex.axis = 0.8,
+  refline = 0,
+  xlim = c(-36.0, 28),
+  ylim = c(0, height),
+  alim = c(-15, 15),
+  steps = 3,
+  digits = c(2, 2),
+  psize = 1.2,
+  font = "arial")
+text(age_pos,c(9,4), c("One Year ECEC attendance","Two Years or more ECEC attendance"), font=2, cex = 0.8, pos=4)
+text(age_pos, height-1, "Age bracket (N attended ECEC, %)",font=2, cex = 0.8, pos = 4)
+text(est_pos, height-1, "Estimate [95% CI]", font=2, cex = 0.8, pos = 2)
+text(p_pos, height-1, "P-value",font=2, cex = 0.8, pos = 4)
+text(st_pos-2, height-1, "Number of studies",font=2, cex = 0.8, pos = 4)
+text(het_pos+3, height-1, "Heterogeneity",font=2, cex = 0.8, pos = 4)
+dev.off()
+
+## adjusted internalizing duration model
+
+
+duration.int.adj <- tibble(
+  age_bracket=c('5-6 years (N= 3455,23.70%)',
+                '7-9 years (N=8479,25.20%)',
+                '10-12 years (N= 6 271, 26.32%)',
+                '13-18 years (N= 614, 9.88%)',
+                '5-6 years (N= 1129, 7.75%)',
+                '7-9 years (N= 469, 1.39%)',
+                '10-12 years (N= 167, 0.69%)'),
+  estimates=c(0.06, -1.21, 1.96, -1.57, -3.69, -2.65, 5.85),
+  low_ci=c(-1.15, -3.26, -3.50, -5.85, -12.22, -6.55, -4.21),
+  high_ci=c(1.28,0.85,7.42, 2.71, 4.85, 1.25, 15.91),
+  p_value=c(0.92,0.24,0.48, 0.47,0.40,0.18,0.95),
+  studies=c('4','5','5','3', '3', '3', '1'),
+  heterogeneity=c(
+    'Q=0.89, df=3, p=0.83; I^2=0.0%, H^2=1.00', 
+    'Q=6.70, df=4, p=0.15; I^2=41.4%, H^2=1.71',
+    'Q=8.12, df=4, p=0.09; I^2=53.4%, H^2=2.14',
+    'Q=2.11, df=2, p=0.35; I^2=0.0%, H^2=1.00',
+    'Q=9.68, df=2, p<0.01; I^2=86.1%, H^2=7.21',
+    'Q=0.07, df=2, p=0.96; I^2=0.0%, H^2= 1.00','NA'))
+
+
+png(
+  file = "internalizing adjusted duration ECEC attendance.png",
+  width = 50,
+  height = 12,
+  units = "cm",
+  res = 300)
+par(mar=c(5,0,0,0))
+age_pos = -36
+est_pos = -20
+p_pos = -19
+het_pos = 19
+st_pos = 17
+height = 12
+
+forest(
+  x = duration.int.adj %>% pull(estimates),
+  ci.lb = duration.int.adj %>% pull(low_ci),
+  ci.ub = duration.int.adj %>% pull(high_ci),
+  slab = duration.int.adj %>% pull(age_bracket),
+  rows=c(8:5,3:1),
+  xlab = "Beta Coefficient (95% CI)",
+  ilab =  cbind(
+    duration.int.adj %>% pull(p_value),
+    duration.int.adj %>% pull(heterogeneity),
+    duration.int.adj %>% pull(studies)),
+  textpos = c(age_pos, est_pos),
+  ilab.xpos = c(p_pos, het_pos, st_pos),
+  ilab.pos = 4,
+  cex = 0.8,
+  cex.axis = 0.8,
+  refline = 0,
+  xlim = c(-36.0, 28),
+  ylim = c(0, height),
+  alim = c(-13, 16),
+  steps = 3,
+  digits = c(2, 2),
+  psize = 1.2,
+  font = "arial")
+text(age_pos,c(9,4), c("One Year ECEC attendance","Two Years or more ECEC attendance"), font=2, cex = 0.8, pos=4)
+text(age_pos, height-1, "Age bracket (N attended ECEC, %)",font=2, cex = 0.8, pos = 4)
+text(est_pos, height-1, "Estimate [95% CI]", font=2, cex = 0.8, pos = 2)
+text(p_pos, height-1, "P-value",font=2, cex = 0.8, pos = 4)
+text(st_pos-2, height-1, "Number of studies",font=2, cex = 0.8, pos = 4)
+text(het_pos+3, height-1, "Heterogeneity",font=2, cex = 0.8, pos = 4)
+dev.off()
+
+## externalizing crude 
+duration.ext.crude <- tibble(
+  age_bracket=c('5-6 years (N= 4618, 22.33 %)',
+                '7-9 years (N= 13 810, 25.14%)',
+                '10-12 years (N= 10 322, 24.33%)',
+                '13-18 years (N= 614, 9.89%)',
+                '5-6 years (N= 1231, 5.95%)',
+                '7-9 years (N= 705, 1.28%)',
+                '10-12 years (N= 331, 5.33%)'),
+  estimates=c(-0.24, -1.83, 0.38, -1.51, -5.39, -3.31, 2.03),
+  low_ci=c(-2.25, -3.23, -5.80, -5.49, -13.00, -7.26, -7.74),
+  high_ci=c(1.77,-0.44, 6.56, 2.48, 2.22, 0.63, 11.81),
+  p_value=c(0.78,0.003,0.20,0.58,0.05,0.54, 0.68),
+  studies=c('4','5','5','3', '3', '3', '1'),
+  heterogeneity=c(
+    'Q=6.51, df=3, p=0.09; I^2=38.4%, H^2=1.62',
+    'Q=5.74, df=4, p=0.22; I^2=18.1%, H^2=1.22',
+    'Q=10.76, df=4, p=0.03; I^2=69.1%, H^2=3.23',
+    'Q=0.22, df=2, p=0.89; I^2=0.0%, H^2=1.00',
+    'Q=8.86, df=2, p=0.01; I^2=82.2%, H^2=5.63',
+    'Q=0.97, df=2, p=0.61; I^2=0.0%, H^2=1.00',
+    'NA'))
+
+
+
+
+
+png(
+  file = "externalizing crude duration ECEC attendance.png",
+  width = 50,
+  height = 12,
+  units = "cm",
+  res = 300)
+par(mar=c(5,0,0,0))
+age_pos = -36
+est_pos = -20
+p_pos = -19
+het_pos = 17
+st_pos = 15
+height = 12
+
+forest(
+  x = duration.ext.crude %>% pull(estimates),
+  ci.lb = duration.ext.crude %>% pull(low_ci),
+  ci.ub = duration.ext.crude %>% pull(high_ci),
+  slab = duration.ext.crude %>% pull(age_bracket),
+  rows=c(8:5,3:1),
+  xlab = "Beta Coefficient (95% CI)",
+  ilab =  cbind(
+    duration.ext.crude %>% pull(p_value),
+    duration.ext.crude %>% pull(heterogeneity),
+    duration.ext.crude %>% pull(studies)),
+  textpos = c(age_pos, est_pos),
+  ilab.xpos = c(p_pos, het_pos, st_pos),
+  ilab.pos = 4,
+  cex = 0.8,
+  cex.axis = 0.8,
+  refline = 0,
+  xlim = c(-36.0, 28),
+  ylim = c(0, height),
+  alim = c(-14, 12),
+  steps = 3,
+  digits = c(2, 2),
+  psize = 1.2,
+  font = "arial")
+text(age_pos,c(9,4), c("One Year ECEC attendance","Two Years or more ECEC attendance"), font=2, cex = 0.8, pos=4)
+text(age_pos, height-1, "Age bracket (N attended ECEC, %)",font=2, cex = 0.8, pos = 4)
+text(est_pos, height-1, "Estimate [95% CI]", font=2, cex = 0.8, pos = 2)
+text(p_pos, height-1, "P-value",font=2, cex = 0.8, pos = 4)
+text(st_pos-2, height-1, "Number of studies",font=2, cex = 0.8, pos = 4)
+text(het_pos+3, height-1, "Heterogeneity",font=2, cex = 0.8, pos = 4)
+dev.off()
+
+## externalizing adjusted results 
+duration.ext.adj <- tibble(
+  age_bracket=c('5-6 years (N= 4618, 22.33 %)',
+                '7-9 years (N= 13 810, 25.14%)',
+                '10-12 years (N= 10 322, 24.33%)',
+                '13-18 years (N= 614, 9.89%)',
+                '5-6 years (N= 1231, 5.95%)',
+                '7-9 years (N= 705, 1.28%)',
+                '10-12 years (N= 331, 5.33%)'),
+  estimates=c(0.83, -0.91, 2.97, -0.53, -3.10, -1.48, 6.20),
+  low_ci=c(-0.36, -2.92, -2.55, -4.80, -11.74, -5.46, -3.62),
+  high_ci=c(2.01,1.10,8.48, 3.75, 5.55, 2.50, 16.03),
+  p_value=c(0.17,0.37,0.29,0.80,0.58,0.47,0.22),
+  studies=c('4','5','5','3', '3', '3', '1'),
+  heterogeneity=c(
+    'Q=5.46, df=3, p=0.14; "I"^2=0.0% , "H"^2=1.00', 
+    'Q=7.30, df=4, p=0.12; I^2=40.3% , H^2=1.68',
+    'Q=9.16, df=4, p=0.06; I^2=57.3% , H^2=2.34', 
+    'Q=0.22, df=2, p=0.89; I^2=0.0%, H^2=1.00',
+    'Q=10.54, df=2, p<0.001; I^2=86.5% , H^2=7.43',
+    'Q=0.97, df=2, p=0.62; I^2=0.0%, H^2=1.00',
+'NA'))
+
+
+
+
+
+
+png(
+  file = "externalizing adj duration ECEC attendance.png",
+  width = 54,
+  height = 12,
+  units = "cm",
+  res = 300)
+par(mar=c(5,0,0,0))
+age_pos = -36
+est_pos = -20
+p_pos = -19
+het_pos = 19
+st_pos = 17
+height = 12
+
+forest(
+  x = duration.ext.adj %>% pull(estimates),
+  ci.lb = duration.ext.adj %>% pull(low_ci),
+  ci.ub = duration.ext.adj%>% pull(high_ci),
+  slab = duration.ext.adj %>% pull(age_bracket),
+  rows=c(8:5,3:1),
+  xlab = "Beta Coefficient (95% CI)",
+  ilab =  cbind(
+    duration.ext.adj %>% pull(p_value),
+    duration.ext.adj %>% pull(heterogeneity),
+    duration.ext.adj %>% pull(studies)),
+  textpos = c(age_pos, est_pos),
+  ilab.xpos = c(p_pos, het_pos, st_pos),
+  ilab.pos = 4,
+  cex = 0.8,
+  cex.axis = 0.8,
+  refline = 0,
+  xlim = c(-36.0, 28),
+  ylim = c(0, height),
+  alim = c(-12, 17),
+  steps = 3,
+  digits = c(2, 2),
+  psize = 1.2,
+  font = "arial")
+text(age_pos,c(9,4), c("One Year ECEC attendance","Two Years or more ECEC attendance"), font=2, cex = 0.8, pos=4)
+text(age_pos, height-1, "Age bracket (N attended ECEC, %)",font=2, cex = 0.8, pos = 4)
+text(est_pos, height-1, "Estimate [95% CI]", font=2, cex = 0.8, pos = 2)
+text(p_pos, height-1, "P-value",font=2, cex = 0.8, pos = 4)
+text(st_pos-2, height-1, "Number of studies",font=2, cex = 0.8, pos = 4)
+text(het_pos+3, height-1, "Heterogeneity",font=2, cex = 0.8, pos = 4)
+dev.off()
+
+
