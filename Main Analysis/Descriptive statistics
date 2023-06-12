@@ -1,0 +1,323 @@
+# Project: Childcare attendance and children's internalizing and externalizing behavior
+# Script purpose: descriptive statistics tables for each cohort
+#Author: Katharine Barry 
+# Email: Katharine.Barry@inserm.fr
+
+#load libraries
+library(DSMolgenisArmadillo)
+library(dsBaseClient)
+library(dsHelper)
+library(DSI)
+library(DSOpal)
+
+## tokens
+tokenelfe <- armadillo.get_token("https://armadillo.sicopre.elfe-france.fr")
+tokeneden <- armadillo.get_token("https://armadillo.sicopre.elfe-france.fr")
+tokenalspac <- armadillo.get_token("https://alspac-armadillo.molgenis.org")
+#### login
+
+builder <- DSI::newDSLoginBuilder()
+#ALSPAC
+builder$append(
+  server = "alspac",
+  url = "https://alspac-armadillo.molgenis.org",
+  token = tokenalspac,
+  driver = "ArmadilloDriver")
+
+#GEN R
+builder$append(server = "generationR", 
+               url = "https://opal.erasmusmc.nl", user = "", 
+               password = "",
+               driver = "OpalDriver")
+
+# DNBC
+builder$append(server = "dnbc",
+               url = "https://opal.sund.ku.dk",
+               user ="",
+               password= "",
+               driver = "OpalDriver" )
+#EDEN
+builder$append(server ="eden",
+               url="https://armadillo.sicopre.elfe-france.fr",
+               token=tokeneden,
+               driver="ArmadilloDriver")
+# INMA
+builder$append(server = "INMA", 
+               url = "https://opal.isglobal.org/repo", 
+               user = "", 
+               password = "",
+               driver = "OpalDriver",
+               profile='rock-inma')
+# ELFE
+builder$append(server ="elfe",
+               url="https://armadillo.sicopre.elfe-france.fr",
+               token=tokenelfe,
+               driver="ArmadilloDriver")
+
+# NINFEA
+builder$append(server = "ninfea", 
+               url = "https://www.lifecycle.unito.it", 
+               user = "", 
+               password = "",
+               driver = "OpalDriver")
+# all login
+logindata <- builder$build()
+c.data <- DSI::datashield.login(logins = logindata, restore="strata_new")
+####################################################################################
+####################################################################################
+################# INTERNALIZING BEHAVIOR ###########################################
+ds.colnames('int_data')
+ds.dim('int_data')
+ds.dim ('ext_data')
+ds.colnames('int_data')
+ds.colnames('ext_data')
+
+
+
+################## descriptive statistics for (5-6 year age range)
+ds.asNumeric("int_data$n.agebirth_m_y.5_7", newobj = 'age7')
+ds.mean("int_data$n.agebirth_m_y.5_7", type="splits")
+ds.mean("int_data$n.agebirth_m_y.5_7", type="combine")
+ds.quantileMean("age7", type='split')
+ds.quantileMean("age7", type='combine', datasources=c.data[c("alspac","generationR","eden", "elfe")])
+ds.table("int_data$f.edu_m_.0.5_7", exclude='NA')
+#high = 1  Medium = 2Low = 3
+ds.mean("int_data$n.int_pc_.5_7", type="splits")
+ds.asNumeric("int_data$n.int_pc_.5_7", newobj = 'intpc7')
+ds.quantileMean("intpc7", type="split")
+ds.quantileMean("intpc7", type="combine", datasources=c.data[c("alspac","eden","generationR", "elfe")])
+ds.table("int_data$f.mom.emp.dich.5_7", exclude='NA', datasources=c.data[c("alspac","eden","generationR","elfe")])
+ds.table('int_data$f.femp_cat_mom_0.5_7', exclude='NA', datasources=c.data[c("alspac","eden","generationR", "elfe")])
+ds.table("int_data$f.fam_splitup.0.5_7", exclude='NA', datasources=c.data[c("alspac","eden","generationR", "elfe")])
+ds.table("int_data$f.sex.5_7", exclude='NA', datasources=c.data[c("alspac","eden","generationR", "elfe")])
+ds.table("int_data$f.only_child.5_7", exclude='NA', datasources=c.data[c("alspac","eden","generationR", "elfe")])
+ds.asNumeric("int_data$n.birth_weight.5_7", newobj = 'bweight7')
+ds.quantileMean("bweight7", type='split')
+ds.quantileMean("bweight7", type='combine', datasources=c.data[c("alspac","eden","generationR", "elfe")])
+################## descriptive statistics for (7-9 year age range)
+
+ds.asNumeric("int_data$n.agebirth_m_y.7_10", newobj = 'age10')
+ds.mean("int_data$n.agebirth_m_y.7_10", type="splits")
+ds.quantileMean("age10", type='split')
+ds.quantileMean("age10", type='combine', datasources=c.data[c("alspac", "generationR", "dnbc", "eden", "INMA")])
+ds.mean("age10", type='combine', datasources=c.data[c("alspac", "generationR", "dnbc", "eden", "INMA")])
+ds.table("int_data$f.edu_m_.0.7_10", exclude='NA', datasources=c.data[c("alspac", "generationR", "dnbc", "eden","INMA")])
+
+#high = 1  Medium = 2Low = 3
+ds.mean("int_data$n.int_pc_.7_10", type="splits")
+ds.asNumeric("int_data$n.int_pc_.7_10", newobj = 'intpc10')
+ds.quantileMean("intpc10", type="combine", datasources=c.data[c("alspac", "generationR", "dnbc", "eden","INMA")])
+ds.quantileMean("intpc10", type="split", datasources=c.data[c("alspac", "generationR", "dnbc", "eden","INMA")])
+
+ds.table("int_data$f.mom.emp.dich.7_10", exclude='NA')
+ds.table('int_data$f.femp_cat_mom_0.7_10', exclude='NA', datasources=c.data[c("alspac", "generationR", "dnbc", "eden","INMA")])
+ds.table("int_data$f.fam_splitup.0.7_10", exclude='NA', datasources=c.data[c("alspac", "generationR", "dnbc", "eden")])
+ds.table("int_data$f.sex.7_10", exclude='NA', datasources=c.data[c("alspac", "generationR", "dnbc", "eden","INMA")])
+ds.table("int_data$f.only_child.7_10", exclude='NA', datasources=c.data[c("alspac", "generationR", "dnbc", "eden","INMA")])
+ds.asNumeric("int_data$n.birth_weight.7_10", newobj = 'bweight10')
+ds.quantileMean("bweight10", type='split')
+ds.quantileMean("bweight10", type='combine', datasources=c.data[c("alspac", "generationR", "dnbc", "eden","INMA")])
+################## descriptive statistics for (10-13 year age range)
+
+ds.asNumeric("int_data$n.agebirth_m_y.10_14", newobj = 'age13')
+ds.mean("int_data$n.agebirth_m_y.10_14", type="splits")
+ds.quantileMean("age13", type='split')
+ds.quantileMean("age13", type='combine', datasources=c.data[c("alspac", "generationR", "dnbc", "ninfea","INMA")])
+ds.table("int_data$f.edu_m_.0.10_14", exclude='NA')
+ds.mean("int_data$n.int_pc_.10_14", type="splits")
+ds.asNumeric("int_data$n.int_pc_.10_14", newobj = 'intpc13')
+ds.quantileMean("intpc13", type="split")
+ds.quantileMean("intpc13",type='combine', datasources=c.data[c("alspac", "generationR", "dnbc", "ninfea","INMA")])
+
+ds.table("int_data$f.mom.emp.dich.10_14", exclude='NA')
+ds.table('int_data$f.femp_cat_mom_0.10_14', exclude='NA', datasources=c.data[c("alspac", "generationR", "dnbc", "ninfea","INMA")])
+ds.table("int_data$f.fam_splitup.0.10_14", exclude='NA', datasources=c.data[c("alspac", "generationR", "dnbc", "ninfea","INMA")])
+ds.table("int_data$f.sex.10_14", exclude='NA')
+ds.table("int_data$f.only_child.10_14", exclude='NA')
+ds.asNumeric("int_data$n.birth_weight.10_14", newobj = 'bweight13')
+ds.quantileMean("bweight13", type='split')
+ds.quantileMean("bweight13", type='combine', datasources=c.data[c("alspac", "generationR", "dnbc", "ninfea","INMA")])
+
+########### exposure breakdown at each bracket
+ds.table("int_data$f.centre_care.5_7", exclude='NA')
+ds.table("int_data$f.centre_care.7_10", exclude='NA')
+ds.table("int_data$f.centre_care.10_14", exclude='NA')
+
+ds.table("int_data$f.cen_dur_cat.5_7", exclude='NA')
+ds.table("int_data$f.cen_dur_cat.7_10", exclude='NA')
+ds.table("int_data$f.cen_dur_cat.10_14", exclude='NA')
+# HAVE TO ADD GEN R TO THIS
+
+
+
+
+
+####################################################################################
+####################################################################################
+################# EXTERNALIZING BEHAVIOR ###########################################
+ds.colnames('ext_data')
+
+
+################## descriptive statistics for (5-6 year age range)
+ds.asNumeric("ext_data$n.agebirth_m_y.5_7", newobj = 'age7')
+ds.mean("ext_data$n.agebirth_m_y.5_7", type="splits")
+ds.quantileMean("age7", type='split')
+ds.quantileMean("age7", type='combine', datasources=c.data[c("alspac", "generationR", "eden", "elfe")])
+ds.table("ext_data$f.edu_m_.0.5_7", exclude='NA')
+
+#high = 1  Medium = 2Low = 3
+ds.mean("ext_data$n.ext_pc_.5_7", type="splits")
+ds.asNumeric("ext_data$n.ext_pc_.5_7", newobj = 'extpc7')
+ds.quantileMean("extpc7", type="split", datasources=c.data[c("alspac", "generationR", "eden", "elfe")])
+ds.quantileMean("extpc7", type="combine", datasources=c.data[c("alspac", "generationR", "eden", "elfe")])
+ds.table("ext_data$f.mom.emp.dich.5_7", exclude='NA')
+ds.table('ext_data$f.femp_cat_mom_0.5_7', exclude='NA')
+ds.table("ext_data$f.fam_splitup.0.5_7", exclude='NA')
+ds.table("ext_data$f.sex.5_7", exclude='NA')
+ds.table("ext_data$f.only_child.5_7", exclude='NA')
+ds.asNumeric("ext_data$n.birth_weight.5_7", newobj = 'bweight7')
+ds.quantileMean("bweight7", type='split')
+ds.quantileMean("bweight7", type="combine", datasources=c.data[c("alspac", "generationR", "eden", "elfe")])
+################## descriptive statistics for (7-9 year age range)
+
+ds.asNumeric("ext_data$n.agebirth_m_y.7_10", newobj = 'age10')
+ds.mean("ext_data$n.agebirth_m_y.7_10", type="splits")
+ds.quantileMean("age10", type='split')
+ds.quantileMean("age10", type='combine',datasources=c.data[c("alspac", "generationR", "eden", "INMA", "dnbc")])
+ds.table("ext_data$f.edu_m_.0.7_10", exclude='NA')
+
+#high = 1  Medium = 2Low = 3
+ds.mean("ext_data$n.ext_pc_.7_10", type="splits")
+ds.asNumeric("ext_data$n.ext_pc_.7_10", newobj = 'extpc10')
+ds.quantileMean("extpc10", type="split")
+ds.quantileMean("extpc10", type='combine',datasources=c.data[c("alspac", "generationR", "eden", "INMA", "dnbc")])
+ds.table("ext_data$f.mom.emp.dich.7_10", exclude='NA')
+ds.table('ext_data$f.femp_cat_mom_0.7_10', exclude='NA')
+ds.table("ext_data$f.fam_splitup.0.7_10", exclude='NA')
+ds.table("ext_data$f.sex.7_10", exclude='NA')
+ds.table("ext_data$f.only_child.7_10", exclude='NA')
+ds.asNumeric("ext_data$n.birth_weight.7_10", newobj = 'bweight10')
+ds.quantileMean("bweight10", type='split')
+ds.quantileMean("bweight10",type='combine',datasources=c.data[c("alspac", "generationR", "eden", "INMA", "dnbc")])
+################## descriptive statistics for (10-13 year age range)
+
+ds.asNumeric("ext_data$n.agebirth_m_y.10_14", newobj = 'age13')
+ds.mean("ext_data$n.agebirth_m_y.10_14", type="splits")
+ds.quantileMean("age13", type='split')
+ds.quantileMean("age13",type='combine',datasources=c.data[c("alspac", "generationR", "ninfea", "INMA", "dnbc")])
+ds.table("ext_data$f.edu_m_.0.10_14", exclude='NA')
+
+#high = 1  Medium = 2Low = 3
+ds.mean("ext_data$n.ext_pc_.10_14", type="splits")
+ds.asNumeric("ext_data$n.ext_pc_.10_14", newobj = 'extpc13')
+ds.quantileMean("extpc13", type="split")
+ds.quantileMean("extpc13",type='combine',datasources=c.data[c("alspac", "generationR", "ninfea", "INMA", "dnbc")])
+
+ds.table("ext_data$f.mom.emp.dich.10_14", exclude='NA')
+ds.table('ext_data$f.femp_cat_mom_0.10_14', exclude='NA')
+ds.table("ext_data$f.fam_splitup.0.10_14", exclude='NA')
+ds.table("ext_data$f.sex.10_14", exclude='NA')
+ds.table("ext_data$f.only_child.10_14", exclude='NA')
+ds.asNumeric("ext_data$n.birth_weight.10_14", newobj = 'bweight13')
+ds.quantileMean("bweight13", type='split')
+ds.quantileMean("bweight13", type='combine',datasources=c.data[c("alspac", "generationR", "ninfea", "INMA", "dnbc")])
+
+
+########### exposure breakdown at each bracket
+ds.table("ext_data$f.centre_care.5_7", exclude='NA')
+ds.table("ext_data$f.centre_care.7_10", exclude='NA')
+ds.table("ext_data$f.centre_care.10_14", exclude='NA')
+
+ds.table("ext_data$f.cen_dur_cat.5_7", exclude='NA')
+ds.table("ext_data$f.cen_dur_cat.7_10", exclude='NA')
+ds.table("ext_data$f.cen_dur_cat.10_14", exclude='NA')
+
+
+
+
+#############################
+### descriptive statistics on the missing population 
+## will do the pooled results showing those included and those excluded overall
+ds.dim('int_data')
+ds.dim ('ext_data')
+## included population for internalizing behavior population
+ds.dim('analysis_df_w_int')
+ds.colnames('analysis_df_w_int')
+## excluded population for internalizing behavior population
+ds.dim('excluded_df_w_int')
+
+## included population for externalizing behavior population
+ds.dim('analysis_df_w_ext')
+## excluded population for externalizing behavior population
+ds.dim('excluded_df_w_ext')
+
+
+
+
+################## descriptive statistics for included population in internalizing behavior
+
+ds.asNumeric("analysis_df_w_int$agebirth_m_y", newobj = 'momage_int')
+ds.quantileMean("momage_int",type='combine')
+ds.table("analysis_df_w_int$edu_m_.0", exclude='NA')
+#high = 1  Medium = 2Low = 3
+ds.asNumeric("analysis_df_w_int$int_pc_", newobj = 'intpc_int')
+ds.quantileMean("intpc_int",type='combine')
+ds.table("analysis_df_w_int$mom.emp.dich", exclude='NA')
+ds.table('analysis_df_w_int$femp_cat_mom_0', exclude='NA')
+ds.table("analysis_df_w_int$fam_splitup.0", exclude='NA')
+ds.table("analysis_df_w_int$sex", exclude='NA')
+ds.table("analysis_df_w_int$only_child", exclude='NA')
+ds.asNumeric("analysis_df_w_int$birth_weight", newobj = 'bw_int')
+ds.quantileMean("bw_int", type='combine')
+
+################## descriptive statistics for excluded population in internalizing behavior
+ds.asNumeric("excluded_df_w_int$agebirth_m_y", newobj = 'momage_int')
+ds.quantileMean("momage_int",type='combine')
+ds.mean("momage_int",type='combine')
+ds.table("excluded_df_w_int$edu_m_.0")
+#high = 1  Medium = 2Low = 3
+ds.asNumeric("excluded_df_w_int$int_pc_", newobj = 'intpc_int')
+ds.quantileMean("intpc_int",type='combine')
+ds.table("excluded_df_w_int$mom.emp.dich")
+ds.table('excluded_df_w_int$femp_cat_mom_0')
+ds.table("excluded_df_w_int$fam_splitup.0")
+ds.table("excluded_df_w_int$sex")
+ds.table("excluded_df_w_int$only_child")
+ds.asNumeric("excluded_df_w_int$birth_weight", newobj = 'bw_int')
+ds.quantileMean("bw_int", type='combine')
+ds.mean("bw_int", type='combine')
+
+################## descriptive statistics for included population in externalizing behavior
+
+ds.asNumeric("analysis_df_w_ext$agebirth_m_y", newobj = 'momage_ext')
+ds.quantileMean("momage_ext",type='combine')
+ds.mean("momage_ext",type='combine')
+
+ds.table("analysis_df_w_ext$edu_m_.0", exclude='NA')
+#high = 1  Medium = 2Low = 3
+ds.asNumeric("analysis_df_w_ext$ext_pc_", newobj = 'intpc_int')
+ds.quantileMean("intpc_int",type='combine')
+ds.table('analysis_df_w_ext$femp_cat_mom_0', exclude='NA')
+ds.table("analysis_df_w_ext$fam_splitup.0", exclude='NA')
+ds.table("analysis_df_w_ext$sex", exclude='NA')
+ds.table("analysis_df_w_ext$only_child", exclude='NA')
+ds.asNumeric("analysis_df_w_ext$birth_weight", newobj = 'bw_ext')
+ds.quantileMean("bw_ext", type='combine')
+
+################## descriptive statistics for excluded population in externalizing behavior
+
+ds.asNumeric("excluded_df_w_ext$agebirth_m_y", newobj = 'momage_ext')
+ds.quantileMean("momage_ext",type='combine')
+ds.mean("momage_ext",type='combine')
+ds.table("excluded_df_w_ext$edu_m_.0")
+#high = 1  Medium = 2Low = 3
+ds.asNumeric("excluded_df_w_ext$int_pc_", newobj = 'intpc_int')
+ds.quantileMean("intpc_ext",type='combine')
+ds.table('excluded_df_w_ext$femp_cat_mom_0')
+ds.table("excluded_df_w_ext$fam_splitup.0")
+ds.table("excluded_df_w_ext$sex")
+ds.table("excluded_df_w_ext$only_child")
+ds.asNumeric("excluded_df_w_ext$birth_weight", newobj = 'bw_ext')
+ds.quantileMean("bw_ext", type='combine')
+ds.mean("bw_ext", type='combine')
+
