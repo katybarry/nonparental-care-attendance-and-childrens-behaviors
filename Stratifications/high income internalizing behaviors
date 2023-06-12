@@ -1,0 +1,838 @@
+# internalizing high income stratification
+#load libraries
+library(DSMolgenisArmadillo)
+library(dsBaseClient)
+library(dsHelper)
+library(DSI)
+library(DSOpal)
+
+#login to all cohorts
+
+tokenelfe <- armadillo.get_token("https://armadillo.sicopre.elfe-france.fr")
+tokeneden <- armadillo.get_token("https://armadillo.sicopre.elfe-france.fr")
+tokenalspac <- armadillo.get_token("https://alspac-armadillo.molgenis.org")
+#### login
+
+builder <- DSI::newDSLoginBuilder()
+#ALSPAC
+builder$append(
+  server = "alspac",
+  url = "https://alspac-armadillo.molgenis.org",
+  token = tokenalspac,
+  driver = "ArmadilloDriver")
+
+#GEN R
+builder$append(server = "generationR", 
+               url = "https://opal.erasmusmc.nl", user = "", 
+               password = "",
+               driver = "OpalDriver")
+
+# DNBC
+builder$append(server = "dnbc",
+               url = "https://opal.sund.ku.dk",
+               user ="",
+               password= "",
+               driver = "OpalDriver" )
+#EDEN
+builder$append(server ="eden",
+               url="https://armadillo.sicopre.elfe-france.fr",
+               token=tokeneden,
+               driver="ArmadilloDriver")
+# INMA
+builder$append(server = "INMA", 
+               url = "https://opal.isglobal.org/repo", 
+               user = "", 
+               password = "",
+               driver = "OpalDriver",
+               profile='rock-inma')
+# ELFE
+builder$append(server ="elfe",
+               url="https://armadillo.sicopre.elfe-france.fr",
+               token=tokenelfe,
+               driver="ArmadilloDriver")
+
+# NINFEA
+builder$append(server = "ninfea", 
+               url = "https://www.lifecycle.unito.it", 
+               user = "", 
+               password = "",
+               driver = "OpalDriver")
+# all login
+logindata <- builder$build()
+c.data <- DSI::datashield.login(logins = logindata, restore="highincome_strat_int_new")
+
+
+###################### INTERNALIZING BEHAVIOR ##############################################
+############################################################################################
+#### we can see from this which cohorts are in which age brackets in internalizing behavior
+
+
+ds.colnames('highincome_strat')
+ds.dim('highincome_strat')
+
+### ALSPAC
+# 5-6, 7-9, 10-12, 13-18
+
+### GenR
+# 5-6, 7-9, 10-12
+
+### DNBC
+# 7-9, 10-12
+
+### EDEN
+#  5-6, 7-9
+### INMA
+# 7-9, 10-12
+### ELFE
+# 5-6
+### ninfea
+#13-18
+
+
+#age bracket 5-6 years _______________________________________________________________________________________
+
+int_5_6_crude_alspac <- ds.glm(formula = "n.int_pc_.5_7 ~ f.centre_care.5_7",
+                               data = "highincome_strat",
+                               family = "gaussian",
+                               datasources = c.data[c('alspac')])
+int_5_6_crude_alspac
+
+dh.lmTab(
+  model = int_5_6_crude_alspac, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+#genr
+int_5_6_crude_genr <- ds.glm(formula = "n.int_pc_.5_7 ~ f.centre_care.5_7",
+                             data = "highincome_strat",
+                             family = "gaussian",
+                             datasources = c.data[c('generationR')])
+
+dh.lmTab(
+  model = int_5_6_crude_genr, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+int_5_6_crude_genr
+
+#eden
+int_5_6_crude_eden <- ds.glm(formula = "n.int_pc_.5_7 ~ f.centre_care.5_7",
+                             data = "highincome_strat",
+                             family = "gaussian",
+                             datasources = c.data[c('eden')])
+
+dh.lmTab(
+  model = int_5_6_crude_eden, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+int_5_6_crude_eden
+
+#elfe
+
+int_5_6_crude_elfe <- ds.glm(formula = "n.int_pc_.5_7 ~ f.centre_care.5_7",
+                             data = "highincome_strat",
+                             family = "gaussian",
+                             datasources = c.data[c('elfe')])
+
+int_5_6_crude_elfe
+
+dh.lmTab(
+  model = int_5_6_crude_elfe, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+
+#crude forest plot meta-analysis for age bracket 5-6 years ________________________
+
+
+yint5_6 <-c((int_5_6_crude_alspac$coefficients["f.centre_care.5_71", "Estimate"]),
+            (int_5_6_crude_genr$coefficients["f.centre_care.5_71", "Estimate"]),
+            (int_5_6_crude_eden$coefficients["f.centre_care.5_71", "Estimate"]),
+            (int_5_6_crude_elfe$coefficients["f.centre_care.5_71", "Estimate"]))
+
+yint5_6
+
+seint5_6 <-c((int_5_6_crude_alspac$coefficients["f.centre_care.5_71", "Std. Error"]), 
+             (int_5_6_crude_genr$coefficients["f.centre_care.5_71", "Std. Error"]),
+             (int_5_6_crude_eden$coefficients["f.centre_care.5_71", "Std. Error"]),
+             (int_5_6_crude_elfe$coefficients["f.centre_care.5_71", "Std. Error"]))
+
+resint5_6 <- metafor::rma(yi=yint5_6, sei=seint5_6)
+resint5_6
+
+
+resint5_6$se
+
+
+library('metafor')
+
+mlabfun5_6 <- function(ext, resint5_6) {
+  list(bquote(paste(.(ext),
+                    ": Q = ", .(formatC(resint5_6$QE, digits=2, format="f")),
+                    ", df = ", .(resint5_6$k - resint5_6$p),
+                    ", p ", .(metafor:::.pval(resint5_6$QEp, digits=2, showeq=TRUE, sep=" ")), "; ",
+                    I^2, " = ", .(formatC(resint5_6$I2, digits=1, format="f")), "%, ",
+                    tau^2, " = ", .(formatC(resint5_6$tau2, digits=2, format="f")),";",
+                    H^2, " = ", .(formatC(resint5_6$H2, digits=2, format="f")))))}
+
+ds.table('highincome_strat$f.centre_care.7', exclude=NA, datasources=c.data[c('alspac', 'generationR','eden','elfe')])
+ds.table('highincome_strat$f.centre_care.10', exclude=NA, datasources=c.data[c('alspac', 'generationR','dnbc', 'eden','INMA')])
+ds.table('highincome_strat$f.centre_care.10_14', exclude=NA, datasources=c.data[c('dnbc','INMA')])
+
+forest(resint5_6,  showweights=TRUE,
+       mlab=mlabfun5_6("RE Model", resint5_6),xlim=c(-40,30),cex=1.2, cex.lab=1, 
+       ylim=c(-1, 7),
+       psize=1, header="Cohort study (N= Attended ECEC, %)", slab=c('ALSPAC (N=56,6.71 %)', 'GenR (N=493, 66.00% )','EDEN (N=121,35.80 %)','ELFE (N=1598, 30.32%)'))
+
+### add column headings to the plot
+ext(15,6,cex=1.2,font=2, c("Weights (%)"))
+
+
+# adjusted forest plot meta-analysis for age bracket 5-6 years______________________________________
+
+#alspac
+ds.colnames('highincome_strat')
+
+int_5_6_adj_alspac <- ds.glm(formula = "n.int_pc_.5_7 ~ f.centre_care.5_7+f.sex.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.edu_m_.0.5_7+ f.mom.emp.dich.5_7",
+                             data = "highincome_strat",
+                             family = "gaussian",
+                             datasources = c.data[c('alspac')])
+int_5_6_adj_alspac
+dh.lmTab(
+  model = int_5_6_adj_alspac, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+#genr
+int_5_6_adj_genr <- ds.glm(formula = "n.int_pc_.5_7 ~ f.centre_care.5_7+f.sex.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.edu_m_.0.5_7+ f.femp_cat_mom_0.5_7",
+                           data = "highincome_strat",
+                           family = "gaussian",
+                           datasources = c.data[c('generationR')])
+
+dh.lmTab(
+  model = int_5_6_adj_genr, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+#eden
+int_5_6_adj_eden <- ds.glm(formula = "n.int_pc_.5_7 ~ f.centre_care.5_7+f.sex.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.edu_m_.0.5_7+ f.femp_cat_mom_0.5_7",
+                           data = "highincome_strat",
+                           family = "gaussian",
+                           datasources = c.data[c('eden')])
+
+dh.lmTab(
+  model = int_5_6_adj_eden, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+#elfe
+
+int_5_6_adj_elfe <- ds.glm(formula = "n.int_pc_.5_7 ~ f.centre_care.5_7+f.sex.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.edu_m_.0.5_7+ f.femp_cat_mom_0.5_7",
+                           data = "highincome_strat",
+                           family = "gaussian",
+                           datasources = c.data[c('elfe')])
+dh.lmTab(
+  model = int_5_6_adj_elfe, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+
+#adjusted forest plot meta-analysis for age bracket 5-6 years ________________________
+yintadj5_6 <-c((int_5_6_adj_alspac$coefficients["f.centre_care.5_71", "Estimate"]),
+               (int_5_6_adj_genr$coefficients["f.centre_care.5_71", "Estimate"]),
+               (int_5_6_adj_eden$coefficients["f.centre_care.5_71", "Estimate"]),
+               (int_5_6_adj_elfe$coefficients["f.centre_care.5_71", "Estimate"]))
+
+yintadj5_6
+
+seintadj5_6 <-c((int_5_6_adj_alspac$coefficients["f.centre_care.5_71", "Std. Error"]), 
+                (int_5_6_adj_genr$coefficients["f.centre_care.5_71", "Std. Error"]),
+                (int_5_6_adj_eden$coefficients["f.centre_care.5_71", "Std. Error"]),
+                (int_5_6_adj_elfe$coefficients["f.centre_care.5_71", "Std. Error"]))
+
+resintadj5_6 <- metafor::rma(yintadj5_6, sei=seintadj5_6)
+resintadj5_6
+library('metafor')
+
+mlabfunadj5_6 <- function(ext, resintadj5_6) {
+  list(bquote(paste(.(ext),
+                    ": Q = ", .(formatC(resintadj5_6$QE, digits=2, format="f")),
+                    ", df = ", .(resintadj5_6$k - resintadj5_6$p),
+                    ", p ", .(metafor:::.pval(resintadj5_6$QEp, digits=2, showeq=TRUE, sep=" ")), "; ",
+                    I^2, " = ", .(formatC(resintadj5_6$I2, digits=1, format="f")), "%, ",
+                    tau^2, " = ", .(formatC(resintadj5_6$tau2, digits=2, format="f")),";",
+                    H^2, " = ", .(formatC(resintadj5_6$H2, digits=2, format="f")))))}
+ds.table('highincome_strat$f.centre_care.5_7', exclude=NA)
+
+forest(resintadj5_6,  showweights=TRUE,
+       mlab=mlabfunadj5_6("RE Model", resintadj5_6),xlim=c(-40,30),cex=1.2, cex.lab=1, 
+       ylim=c(-1, 7),
+       psize=1, header="Cohort study (N= Attended ECEC, %)", slab=c('ALSPAC ( N=71, 7.81%)', 'GenR (N=789, 73.67%)', 'EDEN (N=194, 40.93%)', 'ELFE (N=2222, 33.36%)'))
+
+### add column headings to the plot
+text(15,6,cex=1.2,font=2, c("Weights (%)"))
+
+# crude model by cohort age bracket 7-9 years (alspac, genR, dnbc, inma, eden) ________________________________________
+
+
+ds.table('highincome_strat$f.centre_care.7_10', exclude=NA)
+
+int_7_9_crude_alspac <- ds.glm(formula = "n.int_pc_.7_10 ~ f.centre_care.7_10",
+                               data = "highincome_strat",
+                               family = "gaussian",
+                               datasources = c.data[c('alspac')])
+int_7_9_crude_alspac
+dh.lmTab(
+  model = int_7_9_crude_alspac, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+#genr
+int_7_9_crude_genr <- ds.glm(formula = "n.int_pc_.7_10 ~ f.centre_care.7_10",
+                             data = "highincome_strat",
+                             family = "gaussian",
+                             datasources = c.data[c('generationR')])
+
+dh.lmTab(
+  model = int_7_9_crude_genr, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+int_7_9_crude_genr
+#dnbc
+int_7_9_crude_dnbc <- ds.glm(formula = "n.int_pc_.7_10 ~ f.centre_care.7_10",
+                             data = "highincome_strat",
+                             family = "gaussian",
+                             datasources = c.data[c('dnbc')])
+
+int_7_9_crude_dnbc
+dh.lmTab(
+  model = int_7_9_crude_dnbc, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+# INMA
+
+int_7_9_crude_inma<- ds.glm(formula = "n.int_pc_.7_10 ~ f.centre_care.7_10",
+                            data = "highincome_strat",
+                            family = "gaussian",
+                            datasources = c.data[c('INMA')])
+
+
+dh.lmTab(
+  model = int_7_9_crude_inma, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+int_7_9_crude_inma
+# EDEN
+
+int_7_9_crude_eden<- ds.glm(formula = "n.int_pc_.7_10 ~ f.centre_care.7_10",
+                            data = "highincome_strat",
+                            family = "gaussian",
+                            datasources = c.data[c('eden')])
+
+int_7_9_crude_eden
+dh.lmTab(
+  model = int_7_9_crude_eden, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+int_7_9_crude_eden
+
+#crude forest plot meta-analysis for age bracket 7-9 years__________________________________________
+
+
+yint7_9 <-c((int_7_9_crude_alspac$coefficients["f.centre_care.7_101", "Estimate"]),
+            (int_7_9_crude_genr$coefficients["f.centre_care.7_101", "Estimate"]),
+            (int_7_9_crude_dnbc$coefficients["f.centre_care.7_101", "Estimate"]))
+
+yint7_9
+
+seint7_9 <-c((int_7_9_crude_alspac$coefficients["f.centre_care.7_101", "Std. Error"]), 
+             (int_7_9_crude_genr$coefficients["f.centre_care.7_101", "Std. Error"]),
+             (int_7_9_crude_dnbc$coefficients["f.centre_care.7_101", "Std. Error"]))
+
+
+resint7_9 <- metafor::rma(yint7_9, sei=seint7_9)
+resint7_9
+library('metafor')
+ds.table('highincome_strat$f.centre_care.7_10', exclude=NA, datasources=c.data[c('alspac','generationR','dnbc','eden','INMA')])
+
+mlabfun7_9 <- function(ext, resint7_9) {
+  list(bquote(paste(.(ext),
+                    ": Q = ", .(formatC(resint7_9$QE, digits=2, format="f")),
+                    ", df = ", .(resint7_9$k - resint7_9$p),
+                    ", p ", .(metafor:::.pval(resint7_9$QEp, digits=2, showeq=TRUE, sep=" ")), "; ",
+                    I^2, " = ", .(formatC(resint7_9$I2, digits=1, format="f")), "%, ",
+                    tau^2, " = ", .(formatC(resint7_9$tau2, digits=2, format="f")),";",
+                    H^2, " = ", .(formatC(resint7_9$H2, digits=2, format="f")))))}
+
+forest(resint7_9,  showweights=TRUE,
+       mlab=mlabfun7_9("RE Model", resint7_9),xlim=c(-40,30),cex=1.2, cex.lab=1, 
+       ylim=c(-1, 9),
+       psize=1, header="Cohort study (N= Attended ECEC, %)", slab=c('ALSPAC (N=,% )', 'GenR (N=, %) ','DNBC (N=, %)'))
+
+### add column headings to the plot
+text(15,8,cex=1.2,font=2, c("Weights (%)"))
+
+
+#adjusted linear regressions for age bracket 7-9 years_____________________________________________________________________
+
+#alspac
+ds.colnames('highincome_strat')
+
+int_7_9_adj_alspac <- ds.glm(formula = "n.int_pc_.7_10 ~ f.centre_care.7_10+f.sex.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.edu_m_.0.7_10+ f.mom.emp.dich.7_10",
+                             data = "highincome_strat",
+                             family = "gaussian",
+                             datasources = c.data[c('alspac')])
+int_7_9_adj_alspac
+
+dh.lmTab(
+  model = int_7_9_adj_alspac, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+#genr
+int_7_9_adj_genr <- ds.glm(formula = "n.int_pc_.7_10 ~ f.centre_care.7_10+f.sex.7_10+f.fam_splitup.0.7_10+f.femp_cat_mom_0.7_10+n.birth_weight.7_10+f.only_child.7_10+n.agebirth_m_y.7_10",
+                           data = "highincome_strat",
+                           family = "gaussian",
+                           datasources = c.data[c('generationR')])
+
+dh.lmTab(
+  model = int_7_9_adj_genr, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+#dnbc
+int_7_9_adj_dnbc <- ds.glm(formula = "n.int_pc_.7_10 ~ f.centre_care.7_10+f.sex.7_10+f.fam_splitup.0.7_10+f.femp_cat_mom_0.7_10+n.birth_weight.7_10+f.only_child.7_10+n.agebirth_m_y.7_10",
+                           data = "highincome_strat",
+                           family = "gaussian",
+                           datasources = c.data[c('dnbc')])
+
+
+dh.lmTab(
+  model = int_7_9_adj_dnbc, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+
+
+
+#adjusted forest plot meta-analysis for age bracket 7-9 years________________________________________________________________________
+
+
+yintadj7_9 <-c((int_7_9_adj_alspac$coefficients["f.centre_care.7_101", "Estimate"]),
+               (int_7_9_adj_genr$coefficients["f.centre_care.7_101", "Estimate"]),
+               (int_7_9_adj_dnbc$coefficients["f.centre_care.7_101", "Estimate"]))
+
+yintadj7_9
+
+seintadj7_9 <-c((int_7_9_adj_alspac$coefficients["f.centre_care.7_101", "Std. Error"]), 
+                (int_7_9_adj_genr$coefficients["f.centre_care.7_101", "Std. Error"]),
+                (int_7_9_adj_dnbc$coefficients["f.centre_care.7_101", "Std. Error"]))
+
+
+resintadj7_9 <- metafor::rma(yintadj7_9, sei=seintadj7_9)
+resintadj7_9
+library('metafor')
+
+mlabfun7_9 <- function(ext, resintadj7_9) {
+  list(bquote(paste(.(ext),
+                    ": Q = ", .(formatC(resintadj7_9$QE, digits=2, format="f")),
+                    ", df = ", .(resintadj7_9$k - resintadj7_9$p),
+                    ", p ", .(metafor:::.pval(resintadj7_9$QEp, digits=2, showeq=TRUE, sep=" ")), "; ",
+                    I^2, " = ", .(formatC(resintadj7_9$I2, digits=1, format="f")), "%, ",
+                    tau^2, " = ", .(formatC(resintadj7_9$tau2, digits=2, format="f")),";",
+                    H^2, " = ", .(formatC(resintadj7_9$H2, digits=2, format="f")))))}
+
+forest(resintadj7_9,  showweights=TRUE,
+       mlab=mlabfun7_9("RE Model", resintadj7_9),xlim=c(-40,30),cex=1.2, cex.lab=1,
+       ylim=c(-1, 6),
+       psize=1, header="Cohort study (N= Attended ECEC, %)", slab=c('ALSPAC (N=131,8.09%)', 'GenR (N=746, 77.14%)', 'DNBC (N=4528, 27.47%)'))
+
+### add column headings to the plot
+ext(15,5,cex=1.2,font=2, c("Weights (%)"))
+
+
+## crude
+
+
+int_10_13_alspac <- ds.glm(formula = "n.int_pc_.10_14 ~ f.centre_care.10_14",
+                               data = "highincome_strat",
+                               family = "gaussian",
+                               datasources = c.data[c('alspac')])
+int_10_13_alspac
+dh.lmTab(
+  model = int_10_13_alspac, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+#genr
+int_10_13_genr <- ds.glm(formula = "n.int_pc_.10_14 ~ f.centre_care.10_14",
+                             data = "highincome_strat",
+                             family = "gaussian",
+                             datasources = c.data[c('generationR')])
+
+dh.lmTab(
+  model = int_10_13_genr, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+#dnbc
+int_10_13_dnbc <- ds.glm(formula = "n.int_pc_.10_14 ~ f.centre_care.10_14",
+                             data = "highincome_strat",
+                             family = "gaussian",
+                             datasources = c.data[c('dnbc')])
+
+
+dh.lmTab(
+  model = int_10_13__dnbc, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+
+dh.lmTab(
+  model = int_10_13_inma, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+
+
+int_10_13_ninfea <- ds.glm(formula = "n.int_pc_.10_14 ~ f.centre_care.10_14",
+                               data = "highincome_strat",
+                               family = "gaussian",
+                               datasources = c.data[c('ninfea')])
+
+
+dh.lmTab(
+  model = int_10_13_ninfea, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+
+# adjusted forest plot meta-analysis for age bracket 10-12 years ________________________________
+
+
+yint10_13 <-c((int_10_13_alspac$coefficients["f.centre_care.10_141", "Estimate"]),
+                 (int_10_13_dnbc$coefficients["f.centre_care.10_141", "Estimate"]))
+
+yint10_13
+
+seint10_13 <-c((int_10_13_alspac$coefficients["f.centre_care.10_141", "Std. Error"]), 
+                  (int_10_13_dnbc$coefficients["f.centre_care.10_141", "Std. Error"]))
+
+
+resint10_13 <- metafor::rma(yint10_13, sei=seint10_13)
+resint10_13
+library('metafor')
+
+mlabfun10_13 <- function(ext, resint10_13) {
+  list(bquote(paste(.(ext),
+                    ": Q = ", .(formatC(resint10_13$QE, digits=2, format="f")),
+                    ", df = ", .(resint10_13$k - resint10_13$p),
+                    ", p ", .(metafor:::.pval(resint10_13$QEp, digits=2, showeq=TRUE, sep=" ")), "; ",
+                    I^2, " = ", .(formatC(resint10_13$I2, digits=1, format="f")), "%, ",
+                    tau^2, " = ", .(formatC(resint10_13$tau2, digits=2, format="f")),";",
+                    H^2, " = ", .(formatC(resint10_13$H2, digits=2, format="f")))))}
+
+forest(resint10_13,  showweights=TRUE,cex=1.2, cex.lab=1,
+       mlab=mlabfun10_13("RE Model", resint10_13),xlim=c(-60,50),
+       ylim=c(-1, 6),
+       psize=1, header="Cohort study (N= Attended ECEC, %)", slab=c('ALSPAC (N=41, 5.93%)', 'DNBC (N=3937, 28.78%)'))
+
+ds.table('highincome_strat$f.centre_care.10_14', exclude=NA, datasources=c.data[c('alspac','generationR','dnbc','INMA', 'ninfea')])
+
+### add column headings to the plot
+ext(27,5,cex=1.2,font=2, c("Weights (%)"))
+
+
+
+
+
+# meta analyzed results forest plots ___________________________________________________________
+
+# ECEC attendance and internalizing behaviors crude results ____________________________________
+
+age_crude_est <-c(resint5_6$beta, resint7_9$beta,resint10_13$beta)
+age_crude_se <-c(resint5_6$se, resint7_9$se,resint10_13$se)
+
+meta <- metafor::rma(yi=age_crude_est, sei=age_crude_se)
+library('metafor')
+forest(meta,  showweights=FALSE,xlim=c(-35,35),cex=1.2, cex.lab=1,addfit = FALSE,
+       ylim=c(1, 7),
+       psize=1, header="Age Brackets", slab=c('5-6 years (N=,%)', '7-9 years (N=,%)','10-13 years (N=, %)'))
+
+
+
+# ECEC attendance and internalizing behaviors adjusted results ______________________________
+
+age_adj_est <-c(resintadj5_6$beta, resintadj7_9$beta,resintadj10_13$beta)
+age_adj_se <-c(resintadj5_6$se, resintadj7_9$se,resintadj10_13$se)
+
+metaadj <- metafor::rma(yi=age_adj_est, sei=age_adj_se)
+library('metafor')
+forest(metaadj,  showweights=FALSE,xlim=c(-35,35),cex=1.2, cex.lab=1,addfit = FALSE,
+       ylim=c(1, 7),
+       psize=1, header="Age Brackets", slab=c(''))
+
+
+
+# adjusted linear regressions for age bracket 10-12 years_____________________________________________________
+#alspac
+
+
+int_10_13_adj_alspac <- ds.glm(formula = "n.int_pc_.10_14 ~ f.centre_care.10_14+ n.birth_weight.10_14+f.sex.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.edu_m_.0.10_14+ f.mom.emp.dich.10_14",
+                               data = "highincome_strat",
+                               family = "gaussian",
+                               datasources = c.data[c('alspac')])
+int_10_13_adj_alspac
+dh.lmTab(
+  model = int_5_6_adj_alspac, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+#genr
+int_10_13_adj_genr <- ds.glm(formula = "n.int_pc_.10_14 ~ f.centre_care.10_14+ n.birth_weight.10_14+f.sex.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.edu_m_.0.10_14+ f.femp_cat_mom_0.10_14",
+                             data = "highincome_strat",
+                             family = "gaussian",
+                             datasources = c.data[c('generationR')])
+
+dh.lmTab(
+  model = int_10_13_adj_genr, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+#dnbc
+int_10_13_adj_dnbc <- ds.glm(formula = "n.int_pc_.10_14 ~ f.centre_care.10_14+ n.birth_weight.10_14+f.sex.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.edu_m_.0.10_14+ f.femp_cat_mom_0.10_14",
+                             data = "highincome_strat",
+                             family = "gaussian",
+                             datasources = c.data[c('dnbc')])
+
+
+dh.lmTab(
+  model = int_10_13_adj_dnbc, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+
+dh.lmTab(
+  model = int_10_13_adj_inma, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+# NINFEA  ### too low cell count to include mother's education
+
+int_10_13_adj_ninfea <- ds.glm(formula = "n.int_pc_.10_14 ~ f.centre_care.10_14+ n.birth_weight.10_14+f.sex.10_14+ n.agebirth_m_y.10_14+f.only_child.10_14+ f.femp_cat_mom_0.10_14",
+                               data = "highincome_strat",
+                               family = "gaussian",
+                               datasources = c.data[c('ninfea')])
+
+
+dh.lmTab(
+  model = int_10_13_adj_inma, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+
+
+# adjusted forest plot meta-analysis for age bracket 10-12 years ________________________________
+
+
+yintadj10_13 <-c((int_10_13_adj_alspac$coefficients["f.centre_care.10_141", "Estimate"]),
+                 (int_10_13_adj_dnbc$coefficients["f.centre_care.10_141", "Estimate"]))
+
+yintadj10_13
+
+seintadj10_13 <-c((int_10_13_adj_alspac$coefficients["f.centre_care.10_141", "Std. Error"]), 
+                  (int_10_13_adj_dnbc$coefficients["f.centre_care.10_141", "Std. Error"]))
+
+
+resintadj10_13 <- metafor::rma(yintadj10_13, sei=seintadj10_13)
+resintadj10_13
+library('metafor')
+
+mlabfunadj10_13 <- function(ext, resintadj10_13) {
+  list(bquote(paste(.(ext),
+                    ": Q = ", .(formatC(resintadj10_13$QE, digits=2, format="f")),
+                    ", df = ", .(resintadj10_13$k - resintadj10_13$p),
+                    ", p ", .(metafor:::.pval(resintadj10_13$QEp, digits=2, showeq=TRUE, sep=" ")), "; ",
+                    I^2, " = ", .(formatC(resintadj10_13$I2, digits=1, format="f")), "%, ",
+                    tau^2, " = ", .(formatC(resintadj10_13$tau2, digits=2, format="f")),";",
+                    H^2, " = ", .(formatC(resintadj10_13$H2, digits=2, format="f")))))}
+
+forest(resintadj10_13,  showweights=TRUE,cex=1.2, cex.lab=1,
+       mlab=mlabfunadj10_13("RE Model", resintadj10_13),xlim=c(-60,50),
+       ylim=c(-1, 6),
+       psize=1, header="Cohort study (N= Attended ECEC, %)", slab=c('ALSPAC (N=41, 5.93%)', 'DNBC (N=3937, 28.78%)'))
+
+ds.table('highincome_strat$f.centre_care.10_14', exclude=NA, datasources=c.data[c('alspac','generationR','dnbc','INMA', 'ninfea')])
+
+### add column headings to the plot
+ext(27,5,cex=1.2,font=2, c("Weights (%)"))
+
+
+
+
+
+# meta analyzed results forest plots ___________________________________________________________
+
+# ECEC attendance and internalizing behaviors crude results ____________________________________
+
+# ECEC attendance and internalizing behaviors crude results ____________________________________
+resint5_6
+resint7_9
+resint10_13
+
+ds.table('highincome_strat$f.centre_care.5_7', exclude=NA, datasources=c.data[c('alspac','generationR','eden', 'elfe')])
+ds.table('highincome_strat$f.centre_care.7_10', exclude=NA, datasources=c.data[c('alspac','generationR','dnbc')])
+ds.table('highincome_strat$f.centre_care.10_14', exclude=NA, datasources=c.data[c('alspac','dnbc')])
+
+
+
+
+income.int.crude <- tibble(
+  age_bracket=c('5-6 years (N= 3276,"(35.90%)',
+                '7-9 years (N= 5435, 28.30%)',
+                '10-13 years (N= 4065, 26.90%)'),
+  estimates=c(0.12, -0.50, -0.95),
+  low_ci=c(-1.22, -3.78, -5.74),
+  high_ci=c(1.45, 2.77, 3.84),
+  p_value=c(0.86,0.76,0.70 ),
+  studies=c('4','3', '2'),
+  heterogeneity=c(
+    'Q=2.18, df=3, p=0.54; I^2=0.0%, H^2=1.00',
+    'Q=5.64, df=2, p=0.06; I^2=65.1%, H^2=2.87',
+    'Q=2.40, df=1, p=0.12; I^2=58.3%, H^2=2.40'))
+
+png(
+  file = "internalizing crude income ECEC attendance.png",
+  width = 50,
+  height = 12,
+  units = "cm",
+  res = 300)
+par(mar=c(5,0,0,0))
+age_pos = -36
+est_pos = -20
+p_pos = -19
+het_pos = 17
+st_pos = 15
+height = 6
+
+forest(
+  x = income.int.crude %>% pull(estimates),
+  ci.lb = income.int.crude  %>% pull(low_ci),
+  ci.ub = income.int.crude %>% pull(high_ci),
+  slab = income.int.crude %>% pull(age_bracket),
+  xlab = "Beta Coefficient (95% CI)",
+  ilab =  cbind(
+    income.int.crude  %>% pull(p_value),
+    income.int.crude %>% pull(heterogeneity),
+    income.int.crude  %>% pull(studies)),
+  textpos = c(age_pos, est_pos),
+  ilab.xpos = c(p_pos, het_pos, st_pos),
+  ilab.pos = 4,
+  cex = 0.8,
+  cex.axis = 0.8,
+  refline = 0,
+  xlim = c(-36.0, 28),
+  ylim = c(0, height),
+  alim = c(-10, 10),
+  steps = 3,
+  digits = c(2, 2),
+  psize = 1.2,
+  font = "arial")
+
+text(age_pos, height-1, "Age bracket (N attended ECEC, %)",font=2, cex = 0.8, pos = 4)
+text(est_pos, height-1, "Estimate [95% CI]", font=2, cex = 0.8, pos = 2)
+text(p_pos, height-1, "P-value",font=2, cex = 0.8, pos = 4)
+text(st_pos-2, height-1, "Number of studies",font=2, cex = 0.8, pos = 4)
+text(het_pos, height-1, "Heterogeneity",font=2, cex = 0.8, pos = 4)
+dev.off()
+
+# ECEC attendance and internalizing behaviors adjusted results ______________________________
+
+
+resintadj5_6
+resintadj7_9
+resintadj10_13
+income.int.adj <- tibble(
+  age_bracket=c('5-6 years (N= 3276,"(35.90%)',
+                '7-9 years (N= 5435, 28.30%)',
+                '10-13 years (N= 4065, 26.90%)'),
+  estimates=c(-0.50, -1.43, -1.59),
+  low_ci=c(-1.83, -3.17, -2.75),
+  high_ci=c(0.83, 0.32, -0.44),
+  p_value=c(0.46,0.11,0.007 ),
+  studies=c('4','3', '2'),
+  heterogeneity=c(
+    'Q=2.30, df=3, p=0.51; I^2=0.0%, H^2=1.00',
+    'Q=2.72, df=2, p=0.26; I^2=20.5%, H^2=1.26',
+    'Q=0.93, df=1, p=0.34; I^2=0.0%, H^2=1.00'))
+
+png(
+  file = "internalizing adj income ECEC attendance.png",
+  width = 50,
+  height = 12,
+  units = "cm",
+  res = 300)
+par(mar=c(5,0,0,0))
+age_pos = -36
+est_pos = -20
+p_pos = -19
+het_pos = 17
+st_pos = 15
+height = 6
+
+forest(
+  x = income.int.adj %>% pull(estimates),
+  ci.lb = income.int.adj  %>% pull(low_ci),
+  ci.ub = income.int.adj %>% pull(high_ci),
+  slab = income.int.adj %>% pull(age_bracket),
+  xlab = "Beta Coefficient (95% CI)",
+  ilab =  cbind(
+    income.int.adj  %>% pull(p_value),
+    income.int.adj %>% pull(heterogeneity),
+    income.int.adj  %>% pull(studies)),
+  textpos = c(age_pos, est_pos),
+  ilab.xpos = c(p_pos, het_pos, st_pos),
+  ilab.pos = 4,
+  cex = 0.8,
+  cex.axis = 0.8,
+  refline = 0,
+  xlim = c(-36.0, 28),
+  ylim = c(0, height),
+  alim = c(-10, 10),
+  steps = 3,
+  digits = c(2, 2),
+  psize = 1.2,
+  font = "arial")
+
+text(age_pos, height-1, "Age bracket (N attended ECEC, %)",font=2, cex = 0.8, pos = 4)
+text(est_pos, height-1, "Estimate [95% CI]", font=2, cex = 0.8, pos = 2)
+text(p_pos, height-1, "P-value",font=2, cex = 0.8, pos = 4)
+text(st_pos-2, height-1, "Number of studies",font=2, cex = 0.8, pos = 4)
+text(het_pos, height-1, "Heterogeneity",font=2, cex = 0.8, pos = 4)
+dev.off()
+
