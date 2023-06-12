@@ -1,0 +1,86 @@
+builder <- DSI::newDSLoginBuilder()
+builder$append(server = "dnbc",
+               url = "https://opal.sund.ku.dk",
+               user ="",
+               password= "",
+               driver = "OpalDriver" )
+
+# create loginframe
+logindata <- builder$build()
+
+# login into server
+conns <- DSI::datashield.login(logins = logindata, restore = "interactions")
+
+ds.asNumeric('final$childcarerel_.0', newobj='rel_0')
+ds.asNumeric('final$childcarerel_.1', newobj='rel_1')
+
+
+#changing the NAs so that we do not lose individuals due to the merging of year 1 and year 2 variable:
+ds.replaceNA(x='rel_0', forNA =100, newobj="NArel_.0")
+ds.replaceNA(x='rel_1', forNA =100, newobj="NArel_.1")
+
+ds.make(toAssign='NArel_.0 + NArel_.1', newobj = 'relcare')
+ds.table ('relcare', datasources=conns) 
+
+ds.recodeValues(var.name='relcare', values2replace.vector = c(200,2,10,101,100),
+                new.values.vector = c(9999,1,0,1,0), newobj='rel_care')
+ds.table('rel_care')
+
+
+ds.asNumeric('final$childcareprof_.0', newobj='prof_0')
+ds.asNumeric('final$childcareprof_.1', newobj='prof_1')
+
+
+#changing the NAs so that we do not lose individuals due to the merging of year 1 and year 2 variable:
+ds.replaceNA(x='prof_0', forNA =100, newobj="NAprof_.0")
+ds.replaceNA(x='prof_1', forNA =100, newobj="NAprof_.1")
+
+ds.make(toAssign='NAprof_.0 + NAprof_.1', newobj = 'profcare')
+ds.table ('profcare', datasources=conns) 
+ds.recodeValues(var.name='profcare', values2replace.vector = c(200,2,100,101),
+                new.values.vector = c(9999,1,0,1), newobj='prof_care')
+ds.table('prof_care')
+
+ds.asNumeric('final$childcare_.0', newobj='other_0')
+ds.asNumeric('final$childcare_.1', newobj='other_1')
+
+ds.colnames('final')
+#changing the NAs so that we do not lose individuals due to the merging of year 1 and year 2 variable:
+ds.replaceNA(x='other_0', forNA =100, newobj="NAother_.0")
+ds.replaceNA(x='other_1', forNA =100, newobj="NAother_.1")
+
+ds.make(toAssign='NAother_.0 + NAother_.1', newobj = 'othercare')
+ds.table ('othercare', datasources=conns) 
+ds.recodeValues(var.name='othercare', values2replace.vector = c(200,2,100,101),
+                new.values.vector = c(9999,1,0,1), newobj='other_care')
+
+ds.table('other_care')
+
+# ECEC care
+ds.recodeValues(var.name='centre_care', 
+                values2replace.vector = c(0,1,NA),
+                new.values.vector = c(1000,2000,9999), newobj='centre_care_T')
+ds.table('centre_care_T')
+
+ds.make(toAssign='centre_care_T+rel_care+prof_care+other_care', newobj = 'types_care')
+ds.table("types_care")
+
+
+
+ds.recodeValues(var.name='types_care', values2replace.vector = c(1000,1001,1002,1003),
+                new.values.vector = c(0,2,2,2), newobj='types_care1')
+ds.table("types_care1")
+
+ds.recodeValues(var.name='types_care1', values2replace.vector = c(2001,2002,2003),
+                new.values.vector = c(1,1,1), newobj='types_care2')
+
+ds.table('types_care3')
+
+ds.recodeValues(var.name='types_care2', values2replace.vector = c(39996),
+                new.values.vector = c(NA), newobj='type_care')
+
+ds.table('type_care')
+# 0= no type of care 1= ECEC care 2= other care
+ds.dataFrame(x=c('final','type_care', 'prof_care'), newobj='final')
+
+datashield.workspace_save(conns = conns, ws = "othertypesofcare")
