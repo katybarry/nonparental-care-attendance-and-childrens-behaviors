@@ -1,0 +1,703 @@
+# Project: Nonmaternal care attendance and children's internalizing and externalizing behavior
+# Script purpose: descriptive statistics tables for each cohort
+#Author: Katharine Barry 
+# Email: Katharine.Barry@inserm.fr
+#load libraries
+library(DSMolgenisArmadillo)
+library(dsBaseClient)
+library(dsHelper)
+library(DSI)
+library(DSOpal)
+
+#login to all cohorts
+
+## tokens
+
+tokenelfe <- armadillo.get_token("https://armadillo.sicopre.elfe-france.fr")
+tokeneden <- armadillo.get_token("https://armadillo.sicopre.elfe-france.fr")
+tokenalspac <- armadillo.get_token("https://alspac-armadillo.molgenis.org")
+
+#### login
+
+builder <- DSI::newDSLoginBuilder()
+
+#ALSPAC
+builder$append(
+  server = "alspac",
+  url = "https://alspac-armadillo.molgenis.org",
+  token = tokenalspac,
+  driver = "ArmadilloDriver")
+
+#GEN R
+builder$append(server = "generationR", 
+               url = "https://opal.erasmusmc.nl", user = "", 
+               password = "",
+               driver = "OpalDriver")
+
+# DNBC
+builder$append(server = "dnbc",
+               url = "https://opal.sund.ku.dk",
+               user ="",
+               password= "",
+               driver = "OpalDriver" )
+#EDEN
+builder$append(server ="eden",
+               url="https://armadillo.sicopre.elfe-france.fr",
+               token=tokeneden,
+               driver="ArmadilloDriver")
+# INMA
+builder$append(server = "INMA", 
+               url = "https://opal.isglobal.org/repo", 
+               user = "", 
+               password = "",
+               driver = "OpalDriver",
+               profile='rock-inma')
+# ELFE
+builder$append(server ="elfe",
+               url="https://armadillo.sicopre.elfe-france.fr",
+               token=tokenelfe,
+               driver="ArmadilloDriver")
+# all login
+logindata <- builder$build()
+
+c.data <- DSI::datashield.login(logins = logindata, restore="strata_some")
+####################################################################################
+####################################################################################
+################# INTERNALIZING BEHAVIOR ###########################################
+ds.colnames('int_data')
+ds.dim('int_data')
+ds.dim ('ext_data')
+ds.colnames('int_data')
+ds.colnames('ext_data')
+
+
+
+################## descriptive statistics for (5-6 year age range)
+ds.asNumeric("int_data$n.agebirth_m_y.5_7", newobj = 'age7')
+ds.mean("int_data$n.agebirth_m_y.5_7", type="splits")
+ds.mean("int_data$n.agebirth_m_y.5_7", type="combine")
+ds.quantileMean("age7", type='split')
+ds.quantileMean("age7", type='combine', datasources=c.data[c("alspac","generationR","eden", "elfe")])
+ds.table("int_data$f.edu_m_.0.5_7", exclude='NA')
+#high = 1  Medium = 2Low = 3
+ds.mean("int_data$n.int_pc_.5_7", type="splits")
+ds.asNumeric("int_data$n.int_pc_.5_7", newobj = 'intpc7')
+ds.quantileMean("intpc7", type="split")
+ds.quantileMean("intpc7", type="combine", datasources=c.data[c("alspac","eden","generationR", "elfe")])
+ds.table("int_data$f.mom.emp.dich.5_7", exclude='NA', datasources=c.data[c("alspac","eden","generationR","elfe")])
+ds.table('int_data$f.femp_cat_mom_0.5_7', exclude='NA', datasources=c.data[c("alspac","eden","generationR", "elfe")])
+ds.table("int_data$f.fam_splitup.0.5_7", exclude='NA', datasources=c.data[c("alspac","eden","generationR", "elfe")])
+ds.table("int_data$f.sex.5_7", exclude='NA', datasources=c.data[c("alspac","eden","generationR", "elfe")])
+ds.table("int_data$f.only_child.5_7", exclude='NA', datasources=c.data[c("alspac","eden","generationR", "elfe")])
+ds.asNumeric("int_data$n.birth_weight.5_7", newobj = 'bweight7')
+ds.quantileMean("bweight7", type='split')
+ds.quantileMean("bweight7", type='combine', datasources=c.data[c("alspac","eden","generationR", "elfe")])
+################## descriptive statistics for (7-9 year age range)
+
+ds.asNumeric("int_data$n.agebirth_m_y.7_10", newobj = 'age10')
+ds.mean("int_data$n.agebirth_m_y.7_10", type="splits")
+ds.quantileMean("age10", type='split')
+ds.quantileMean("age10", type='combine', datasources=c.data[c("alspac", "generationR", "dnbc", "eden", "INMA")])
+ds.mean("age10", type='combine', datasources=c.data[c("alspac", "generationR", "dnbc", "eden", "INMA")])
+ds.table("int_data$f.edu_m_.0.7_10", exclude='NA', datasources=c.data[c("alspac", "generationR", "dnbc", "eden","INMA")])
+
+#high = 1  Medium = 2Low = 3
+ds.mean("int_data$n.int_pc_.7_10", type="splits")
+ds.asNumeric("int_data$n.int_pc_.7_10", newobj = 'intpc10')
+ds.quantileMean("intpc10", type="combine", datasources=c.data[c("alspac", "generationR", "dnbc", "eden","INMA")])
+ds.quantileMean("intpc10", type="split", datasources=c.data[c("alspac", "generationR", "dnbc", "eden","INMA")])
+
+ds.table("int_data$f.mom.emp.dich.7_10", exclude='NA')
+ds.table('int_data$f.femp_cat_mom_0.7_10', exclude='NA', datasources=c.data[c("alspac", "generationR", "dnbc", "eden","INMA")])
+ds.table("int_data$f.fam_splitup.0.7_10", exclude='NA', datasources=c.data[c("alspac", "generationR", "dnbc", "eden")])
+ds.table("int_data$f.sex.7_10", exclude='NA', datasources=c.data[c("alspac", "generationR", "dnbc", "eden","INMA")])
+ds.table("int_data$f.only_child.7_10", exclude='NA', datasources=c.data[c("alspac", "generationR", "dnbc", "eden","INMA")])
+ds.asNumeric("int_data$n.birth_weight.7_10", newobj = 'bweight10')
+ds.quantileMean("bweight10", type='split')
+ds.quantileMean("bweight10", type='combine', datasources=c.data[c("alspac", "generationR", "dnbc", "eden","INMA")])
+################## descriptive statistics for (10-13 year age range)
+
+ds.asNumeric("int_data$n.agebirth_m_y.10_14", newobj = 'age13')
+ds.mean("int_data$n.agebirth_m_y.10_14", type="splits")
+ds.quantileMean("age13", type='split')
+ds.quantileMean("age13", type='combine', datasources=c.data[c("alspac", "generationR", "dnbc", "INMA")])
+ds.table("int_data$f.edu_m_.0.10_14", exclude='NA')
+ds.mean("int_data$n.int_pc_.10_14", type="combine")
+ds.asNumeric("int_data$n.int_pc_.10_14", newobj = 'intpc13')
+ds.quantileMean("intpc13", type="split")
+ds.quantileMean("intpc13",type='combine', datasources=c.data[c("alspac", "generationR", "dnbc", "INMA")])
+
+ds.table("int_data$f.mom.emp.dich.10_14", exclude='NA')
+ds.table('int_data$f.femp_cat_mom_0.10_14', exclude='NA', datasources=c.data[c("alspac", "generationR", "dnbc", "INMA")])
+ds.table("int_data$f.fam_splitup.0.10_14", exclude='NA', datasources=c.data[c("alspac", "generationR", "dnbc", "INMA")])
+ds.table("int_data$f.sex.10_14", exclude='NA')
+ds.table("int_data$f.only_child.10_14", exclude='NA')
+ds.asNumeric("int_data$n.birth_weight.10_14", newobj = 'bweight13')
+ds.quantileMean("bweight13", type='split')
+ds.quantileMean("bweight13", type='combine', datasources=c.data[c("alspac", "generationR", "dnbc", "INMA")])
+
+########### exposure breakdown at each bracket
+ds.table("int_data$f.centre_care.5_7", exclude='NA')
+ds.table("int_data$f.centre_care.7_10", exclude='NA')
+ds.table("int_data$f.centre_care.10_14", exclude='NA')
+
+ds.table("int_data$f.some_care.5_7", exclude='NA')
+ds.table("int_data$f.some_care.7_10", exclude='NA')
+ds.table("int_data$f.some_care.10_14", exclude='NA')
+
+ds.table("int_data$f.type_care.5_7", exclude='NA')
+ds.table("int_data$f.type_care.7_10", exclude='NA')
+ds.table("int_data$f.type_care.10_14", exclude='NA')
+
+
+
+
+
+
+####################################################################################
+####################################################################################
+################# EXTERNALIZING BEHAVIOR ###########################################
+ds.colnames('ext_data')
+
+
+################## descriptive statistics for (5-6 year age range)
+ds.asNumeric("ext_data$n.agebirth_m_y.5_7", newobj = 'age7')
+ds.mean("ext_data$n.agebirth_m_y.5_7", type="splits")
+ds.mean("age7", type="combine")
+
+ds.quantileMean("age7", type='split')
+ds.quantileMean("age7", type='combine', datasources=c.data[c("alspac", "generationR", "eden", "elfe")])
+ds.table("ext_data$f.edu_m_.0.5_7", exclude='NA')
+
+#high = 1  Medium = 2Low = 3
+ds.mean("ext_data$n.ext_pc_.5_7", type="splits")
+ds.asNumeric("ext_data$n.ext_pc_.5_7", newobj = 'extpc7')
+ds.quantileMean("extpc7", type="split", datasources=c.data[c("alspac", "generationR", "eden", "elfe")])
+ds.quantileMean("extpc7", type="combine", datasources=c.data[c("alspac", "generationR", "eden", "elfe")])
+ds.table("ext_data$f.mom.emp.dich.5_7", exclude='NA')
+ds.table('ext_data$f.femp_cat_mom_0.5_7', exclude='NA')
+ds.table("ext_data$f.fam_splitup.0.5_7", exclude='NA')
+ds.table("ext_data$f.sex.5_7", exclude='NA')
+ds.table("ext_data$f.only_child.5_7", exclude='NA')
+ds.asNumeric("ext_data$n.birth_weight.5_7", newobj = 'bweight7')
+ds.quantileMean("bweight7", type='split')
+ds.quantileMean("bweight7", type="combine", datasources=c.data[c("alspac", "generationR", "eden", "elfe")])
+################## descriptive statistics for (7-9 year age range)
+
+ds.asNumeric("ext_data$n.agebirth_m_y.7_10", newobj = 'age10')
+ds.mean("ext_data$n.agebirth_m_y.7_10", type="splits")
+ds.mean("ext_data$n.agebirth_m_y.7_10", type="combine")
+ds.quantileMean("age10", type='split')
+ds.quantileMean("age10", type='combine',datasources=c.data[c("alspac", "generationR", "eden", "INMA", "dnbc")])
+ds.table("ext_data$f.edu_m_.0.7_10", exclude='NA')
+
+#high = 1  Medium = 2Low = 3
+ds.mean("ext_data$n.ext_pc_.7_10", type="splits")
+ds.asNumeric("ext_data$n.ext_pc_.7_10", newobj = 'extpc10')
+ds.quantileMean("extpc10", type="split")
+ds.quantileMean("extpc10", type='combine',datasources=c.data[c("alspac", "generationR", "eden", "INMA", "dnbc")])
+ds.table("ext_data$f.mom.emp.dich.7_10", exclude='NA')
+ds.table('ext_data$f.femp_cat_mom_0.7_10', exclude='NA')
+ds.table("ext_data$f.fam_splitup.0.7_10", exclude='NA')
+ds.table("ext_data$f.sex.7_10", exclude='NA')
+ds.table("ext_data$f.only_child.7_10", exclude='NA')
+ds.asNumeric("ext_data$n.birth_weight.7_10", newobj = 'bweight10')
+ds.quantileMean("bweight10", type='split')
+ds.quantileMean("bweight10",type='combine',datasources=c.data[c("alspac", "generationR", "eden", "INMA", "dnbc")])
+################## descriptive statistics for (10-13 year age range)
+
+ds.asNumeric("ext_data$n.agebirth_m_y.10_14", newobj = 'age13')
+ds.mean("ext_data$n.agebirth_m_y.10_14", type="splits")
+ds.mean("ext_data$n.agebirth_m_y.10_14", type="combine")
+ds.quantileMean("age13", type='split')
+ds.quantileMean("age13",type='combine',datasources=c.data[c("alspac", "generationR",  "INMA", "dnbc")])
+ds.table("ext_data$f.edu_m_.0.10_14", exclude='NA')
+
+#high = 1  Medium = 2Low = 3
+ds.mean("ext_data$n.ext_pc_.10_14", type="splits")
+ds.asNumeric("ext_data$n.ext_pc_.10_14", newobj = 'extpc13')
+ds.quantileMean("extpc13", type="split")
+ds.quantileMean("extpc13",type='combine',datasources=c.data[c("alspac", "generationR", "INMA", "dnbc")])
+
+ds.table("ext_data$f.mom.emp.dich.10_14", exclude='NA')
+ds.table('ext_data$f.femp_cat_mom_0.10_14', exclude='NA')
+ds.table("ext_data$f.fam_splitup.0.10_14", exclude='NA')
+ds.table("ext_data$f.sex.10_14", exclude='NA')
+ds.table("ext_data$f.only_child.10_14", exclude='NA')
+ds.asNumeric("ext_data$n.birth_weight.10_14", newobj = 'bweight13')
+ds.quantileMean("bweight13", type='split')
+ds.quantileMean("bweight13", type='combine',datasources=c.data[c("alspac", "generationR",  "INMA", "dnbc")])
+
+
+########### exposure breakdown at each bracket
+
+ds.table("ext_data$f.some_care.5_7", exclude='NA')
+ds.table("ext_data$f.some_care.7_10", exclude='NA')
+ds.table("ext_data$f.some_care.10_14", exclude='NA')
+
+ds.table("ext_data$f.type_care.5_7", exclude='NA')
+ds.table("ext_data$f.type_care.7_10", exclude='NA')
+ds.table("ext_data$f.type_care.10_14", exclude='NA')
+
+
+
+#############################
+### descriptive statistics on the missing population 
+
+
+c.data <- DSI::datashield.login(logins = logindata, restore="all_pop_defined_some")
+
+
+dt.makeExcludedDf(
+  original_df = "missingexternal_el_w", 
+  final_df = "analysis_df_w_ext",
+  new_obj = "excluded_df_w_ext",
+  conns=c.data)
+
+
+dt.makeExcludedDf(
+  original_df = "missinginternal_el_w", 
+  final_df = "analysis_df_w_int",
+  new_obj = "excluded_df_w_int",
+  conns=c.data)
+
+datashield.workspace_save(c.data, "missing_population")
+
+ds.dim('int_data')
+ds.dim ('ext_data')
+## included population for internalizing behavior population
+ds.dim('analysis_df_w_int')
+ds.colnames('analysis_df_w_int')
+
+
+
+# number of people included in the analysis INTERNALIZING
+
+ds.rep(1, times=7329, newobj = 'included', datasources=c.data[c('alspac')])
+ds.rep(1, times=2851, newobj = 'included', datasources=c.data[c('generationR')])
+ds.rep(1, times=51004, newobj = 'included', datasources=c.data[c('dnbc')])
+ds.rep(1, times=1191, newobj = 'included', datasources=c.data[c('eden')])
+ds.rep(1, times=10840, newobj = 'included', datasources=c.data[c('elfe')])
+ds.rep(1, times=1238, newobj = 'included', datasources=c.data[c('INMA')])
+
+
+ds.asNumeric('analysis_df_w_int$agebirth_m_y', newobj='n.agebirth_m_y')
+ds.asNumeric('analysis_df_w_int$birth_weight', newobj='n.birth_weight')
+ds.asNumeric('analysis_df_w_int$child_id', newobj='n.child_id')
+ds.asFactor('analysis_df_w_int$only_child', newobj.name='f.only_child')
+ds.asFactor('analysis_df_w_int$sex', newobj.name='f.sex')
+ds.asFactor('analysis_df_w_int$edu_m_.0', newobj.name='f.edu_m_.0')
+ds.table('f.edu_m_.0')
+ds.asFactor('analysis_df_w_int$fam_splitup.0', newobj.name='f.fam_splitup.0')
+ds.asFactor("analysis_df_w_int$femp_cat_mom_0", newobj.name='f.femp_cat_mom_0')
+# i have to dichotomize this mothers employment so that it can be used for alspac
+ds.asNumeric("analysis_df_w_int$femp_cat_mom_0", newobj = "mom.empl.dich")
+ds.table('mom.empl.dich')
+ds.Boole(V1="mom.empl.dich", V2='1', Boolean.operator='==', numeric.output=TRUE, newobj="mom.emp.dich")
+ds.table('mom.emp.dich') 
+ds.asFactor('mom.emp.dich', newobj.name='f.mom.emp.dich')
+
+
+## created dataframes for included population 
+
+ds.dataFrame(x=c('included','f.femp_cat_mom_0', 'f.fam_splitup.0', 'f.mom.emp.dich', 'n.agebirth_m_y', 'n.birth_weight', 'n.child_id', 'f.only_child', 'f.sex', 'f.edu_m_.0'), newobj = 'included_var', datasources=c.data[c('dnbc', 'eden', 'elfe', "alspac", "generationR")])
+ds.dataFrame(x=c('included','f.femp_cat_mom_0', 'n.agebirth_m_y', 'n.birth_weight', 'n.child_id', 'f.only_child', 'f.sex', 'f.edu_m_.0'), newobj = 'included_var', datasources=c.data[c("INMA")])
+
+## excluded population for internalizing behavior population
+ds.dim('excluded_df_w_int')
+ds.colnames('excluded_df_w_int')
+
+ds.rep(0, times=3349, newobj = 'included', datasources=c.data[c('alspac')])
+ds.rep(0, times=3998, newobj = 'included', datasources=c.data[c('generationR')])
+ds.rep(0, times=15812, newobj = 'included', datasources=c.data[c('dnbc')])
+ds.rep(0, times=26, newobj = 'included', datasources=c.data[c('eden')])
+ds.rep(0, times=408, newobj = 'included', datasources=c.data[c('elfe')])
+ds.rep(0, times=114, newobj = 'included', datasources=c.data[c('INMA')])
+
+ds.asNumeric('excluded_df_w_int$agebirth_m_y', newobj='n.agebirth_m_y')
+ds.asNumeric('excluded_df_w_int$birth_weight', newobj='n.birth_weight')
+ds.asNumeric('excluded_df_w_int$child_id', newobj='n.child_id')
+ds.asFactor('excluded_df_w_int$only_child', newobj.name='f.only_child')
+ds.asFactor('excluded_df_w_int$sex', newobj.name='f.sex')
+ds.asFactor('excluded_df_w_int$edu_m_.0', newobj.name='f.edu_m_.0')
+ds.asFactor('excluded_df_w_int$fam_splitup.0', newobj.name='f.fam_splitup.0')
+ds.asFactor("excluded_df_w_int$femp_cat_mom_0", newobj.name='f.femp_cat_mom_0')
+# i have to dichotomize this mothers employment so that it can be used for alspac
+ds.asNumeric("excluded_df_w_int$femp_cat_mom_0", newobj = "mom.empl.dich")
+ds.table('mom.empl.dich')
+ds.Boole(V1="mom.empl.dich", V2='1', Boolean.operator='==', numeric.output=TRUE, newobj="mom.emp.dich")
+ds.table('mom.emp.dich') 
+ds.asFactor('mom.emp.dich', newobj.name='f.mom.emp.dich')
+
+
+
+ds.dataFrame(x=c('included','f.femp_cat_mom_0', 'f.fam_splitup.0', 'f.mom.emp.dich','n.agebirth_m_y', 'n.birth_weight', 'n.child_id', 'f.only_child', 'f.sex', 'f.edu_m_.0'), newobj = 'excluded_var', datasources=c.data[c('dnbc', 'eden', 'elfe', "alspac", "generationR")])
+ds.dataFrame(x=c('included','f.femp_cat_mom_0','n.agebirth_m_y', 'n.birth_weight', 'n.child_id', 'f.only_child', 'f.sex', 'f.edu_m_.0'), newobj = 'excluded_var', datasources=c.data[c("INMA")])
+
+ds.colnames('included_var')
+ds.colnames('excluded_var')
+
+
+
+ds.rbind(c('included_var', 'excluded_var'), newobj='compare',datasources=c.data[c('dnbc', 'eden', 'elfe', "alspac", "generationR")])
+ds.rbind(c('included_var', 'excluded_var'), newobj='compare',datasources=c.data[c('INMA')])
+
+ds.dim('included_var')
+ds.dim('excluded_var')
+
+
+
+ds.table('compare$f.sex')
+
+ds.dataFrame('compare', newobj='compare',datasources=c.data[c('dnbc', 'eden', 'elfe', "alspac", "generationR")])
+ds.dataFrame('compare', newobj='compare',datasources=c.data[c('INMA')])
+
+ds.dim('compare')
+
+ds.table('compare$f.edu_m_.0')
+ds.table('included_var$f.edu_m_.0')
+ds.table('excluded_var$f.edu_m_.0')
+
+ds.table('compare$f.sex', useNA="always")
+ds.table('included_var$f.sex')
+ds.table('excluded_var$f.sex')
+
+
+datashield.workspace_save(c.data, "compare_internalize")
+
+c.data <- DSI::datashield.login(logins = logindata, restore="compare_internalize")
+
+ds.asNumeric('compare$n.birth_weight', newobj='birthweight')
+ds.asNumeric('compare$n.agebirth_m_y', newobj='momage')
+
+ds.table('compare$f.edu_m_.0', datasources =c.data[c('INMA')])
+ds.asFactor('compare$f.edu_m_.0', newobj.name='edu')
+ds.asFactor('compare$f.femp_cat_mom_0', newobj.name='emp')
+ds.asFactor('compare$f.fam_splitup.0', newobj.name='divorce', datasources =c.data[c('dnbc','eden', 'elfe', "alspac", "generationR")])
+ds.asFactor('compare$f.sex', newobj.name='sex')
+ds.asFactor('compare$f.only_child', newobj.name='only_child')
+ds.asFactor('compare$included', newobj.name='outcome')
+
+ds.table('emp')
+
+ds.table('edu')
+ds.table('edu', datasources =c.data[c('INMA')])
+ds.table('emp', datasources =c.data[c('INMA')])
+
+
+ds.dataFrame(x=c('birthweight','momage','edu','emp','divorce','sex','only_child','outcome'), stringsAsFactors = FALSE, newobj = 'pvalueint', datasources=c.data[c('dnbc','eden', 'elfe', "alspac", "generationR")])
+ds.dataFrame(x=c('birthweight','momage','edu','emp','sex','only_child','outcome'), stringsAsFactors = TRUE, newobj = 'pvalueint', datasources=c.data[c('INMA')])
+
+
+datashield.workspace_save(c.data, "pvalue_int")
+
+mothersage<-ds.glm('outcome~momage', data='pvalueint', family='binomial')
+mothersage
+
+ds.table(rvar="pvalueint$edu",cvar='pvalueint$outcome', exclude = 'NA', report.chisq.tests = TRUE)
+
+#high = 1  Medium = 2Low = 3
+
+ds.colnames('pvalueint')
+ds.table(rvar='pvalueint$emp',cvar='pvalueint$outcome', report.chisq.tests = TRUE)
+
+ds.table(rvar="pvalueint$divorce",cvar='pvalueint$outcome',exclude = 'NA', report.chisq.tests = TRUE, datasources=c.data[c('dnbc', 'eden', 'elfe', "alspac", "generationR")])
+ds.table(rvar="pvalueint$sex",cvar='pvalueint$outcome', exclude = 'NA', report.chisq.tests = TRUE)
+ds.table(rvar="pvalueint$only_child",cvar='pvalueint$outcome', exclude = 'NA', report.chisq.tests = TRUE)
+
+birthweight<-ds.glm('outcome~birthweight', data='pvalueint', family='binomial')
+birthweight
+
+
+
+
+
+## included population for externalizing behavior population
+ds.dim('analysis_df_w_ext')
+
+ds.rep(1, times=7329, newobj = 'included', datasources=c.data[c('alspac')])
+ds.rep(1, times=2852, newobj = 'included', datasources=c.data[c('generationR')])
+ds.rep(1, times=49011, newobj = 'included', datasources=c.data[c('dnbc')])
+ds.rep(1, times=1191, newobj = 'included', datasources=c.data[c('eden')])
+ds.rep(1, times=10841, newobj = 'included', datasources=c.data[c('elfe')])
+ds.rep(1, times=1238, newobj = 'included', datasources=c.data[c('INMA')])
+
+
+ds.asNumeric('analysis_df_w_ext$agebirth_m_y', newobj='n.agebirth_m_y')
+ds.asNumeric('analysis_df_w_ext$birth_weight', newobj='n.birth_weight')
+ds.asNumeric('analysis_df_w_ext$child_id', newobj='n.child_id')
+ds.asFactor('analysis_df_w_ext$only_child', newobj.name='f.only_child')
+ds.asFactor('analysis_df_w_ext$sex', newobj.name='f.sex')
+ds.asFactor('analysis_df_w_ext$edu_m_.0', newobj.name='f.edu_m_.0')
+ds.table('f.edu_m_.0')
+ds.asFactor('analysis_df_w_ext$fam_splitup.0', newobj.name='f.fam_splitup.0')
+ds.asFactor("analysis_df_w_ext$femp_cat_mom_0", newobj.name='f.femp_cat_mom_0')
+# i have to dichotomize this mothers employment so that it can be used for alspac
+ds.asNumeric("analysis_df_w_ext$femp_cat_mom_0", newobj = "mom.empl.dich")
+ds.table('mom.empl.dich')
+ds.Boole(V1="mom.empl.dich", V2='1', Boolean.operator='==', numeric.output=TRUE, newobj="mom.emp.dich")
+ds.table('mom.emp.dich') 
+ds.asFactor('mom.emp.dich', newobj.name='f.mom.emp.dich')
+
+
+
+
+ds.dataFrame(x=c('included','f.femp_cat_mom_0', 'f.fam_splitup.0', 'f.mom.emp.dich', 'n.agebirth_m_y', 'n.birth_weight', 'n.child_id', 'f.only_child', 'f.sex', 'f.edu_m_.0'), newobj = 'included_var', datasources=c.data[c('dnbc', 'eden', 'elfe', "alspac", "generationR")])
+ds.dataFrame(x=c('included','f.femp_cat_mom_0','n.agebirth_m_y', 'n.birth_weight', 'n.child_id', 'f.only_child', 'f.sex', 'f.edu_m_.0'), newobj = 'included_var', datasources=c.data[c("INMA")])
+
+ds.table('included_var$f.only_child')
+
+## excluded population for externalizing behavior population
+ds.dim('excluded_df_w_ext')
+
+ds.rep(0, times=3349, newobj = 'included', datasources=c.data[c('alspac')])
+ds.rep(0, times=3997, newobj = 'included', datasources=c.data[c('generationR')])
+ds.rep(0, times=17805, newobj = 'included', datasources=c.data[c('dnbc')])
+ds.rep(0, times=25, newobj = 'included', datasources=c.data[c('eden')])
+ds.rep(0, times=408, newobj = 'included', datasources=c.data[c('elfe')])
+ds.rep(0, times=114, newobj = 'included', datasources=c.data[c('INMA')])
+
+ds.asNumeric('excluded_df_w_ext$agebirth_m_y', newobj='n.agebirth_m_y')
+ds.asNumeric('excluded_df_w_ext$birth_weight', newobj='n.birth_weight')
+ds.asNumeric('excluded_df_w_ext$child_id', newobj='n.child_id')
+ds.asFactor('excluded_df_w_ext$only_child', newobj.name='f.only_child')
+ds.asFactor('excluded_df_w_ext$sex', newobj.name='f.sex')
+ds.asFactor('excluded_df_w_ext$edu_m_.0', newobj.name='f.edu_m_.0')
+ds.asFactor('excluded_df_w_ext$fam_splitup.0', newobj.name='f.fam_splitup.0')
+ds.asFactor("excluded_df_w_ext$femp_cat_mom_0", newobj.name='f.femp_cat_mom_0')
+# i have to dichotomize this mothers employment so that it can be used for alspac
+ds.asNumeric("excluded_df_w_ext$femp_cat_mom_0", newobj = "mom.empl.dich")
+ds.table('mom.empl.dich')
+ds.Boole(V1="mom.empl.dich", V2='1', Boolean.operator='==', numeric.output=TRUE, newobj="mom.emp.dich")
+ds.table('mom.emp.dich') 
+ds.asFactor('mom.emp.dich', newobj.name='f.mom.emp.dich')
+
+
+# created dataframes
+ds.dataFrame(x=c('included','f.femp_cat_mom_0', 'f.fam_splitup.0', 'f.mom.emp.dich', 'n.agebirth_m_y', 'n.birth_weight', 'n.child_id', 'f.only_child', 'f.sex', 'f.edu_m_.0'), newobj = 'excluded_var', datasources=c.data[c('dnbc', 'eden', 'elfe', "alspac", "generationR")])
+ds.dataFrame(x=c('included', 'f.femp_cat_mom_0', 'n.agebirth_m_y', 'n.birth_weight', 'n.child_id', 'f.only_child', 'f.sex', 'f.edu_m_.0'), newobj = 'excluded_var', datasources=c.data[c("INMA")])
+
+ds.dim('excluded_var')
+ds.dim('included_var')
+
+ds.colnames('excluded_var')
+ds.colnames('included_var')
+
+
+ds.table('excluded_var$f.edu_m_.0')
+ds.table('included_var$f.edu_m_.0')
+
+ds.rbind(c('included_var', 'excluded_var'), newobj='compare',datasources=c.data[c('dnbc', 'eden', 'elfe', "alspac", "generationR")])
+ds.rbind(c('included_var', 'excluded_var'), newobj='compare',datasources=c.data[c('INMA')])
+
+
+ds.dataFrame('compare', newobj='compare',datasources=c.data[c('dnbc', 'eden', 'elfe', "alspac", "generationR")])
+ds.dataFrame('compare', newobj='compare',datasources=c.data[c('INMA')])
+
+
+ds.dim('compare')
+ds.table('included_var$f.sex', useNA="always")
+ds.table('excluded_var$f.sex')
+
+
+
+datashield.workspace_save(c.data, "compare_externalizing")
+
+c.data <- DSI::datashield.login(logins = logindata, restore="compare_externalizing")
+
+
+ds.asNumeric('compare$n.birth_weight', newobj='birthweight')
+ds.asNumeric('compare$n.agebirth_m_y', newobj='momage')
+
+ds.table('compare$included', useNA="always")
+ds.asFactor('compare$f.edu_m_.0', newobj.name='edu')
+ds.asFactor('compare$f.femp_cat_mom_0', newobj.name='emp')
+ds.asFactor('compare$f.fam_splitup.0', newobj.name='divorce',datasources=c.data[c('dnbc', 'eden', 'elfe', "alspac", "generationR")])
+ds.asFactor('compare$f.sex', newobj.name='sex')
+ds.asFactor('compare$f.only_child', newobj.name='only_child')
+ds.asFactor('compare$included', newobj.name='outcome')
+
+ds.table('compare$f.only_child', useNA="always")
+
+
+ds.table('divorce', useNA="always")
+ds.table('emp', useNA="always")
+
+
+
+
+
+
+
+ds.table('outcome')
+
+
+ds.dataFrame(x=c('birthweight','momage','edu','emp','divorce','sex','only_child','outcome'), stringsAsFactors = FALSE, newobj = 'pvalueext', datasources=c.data[c('dnbc','eden', 'elfe', "alspac", "generationR")])
+ds.dataFrame(x=c('birthweight','momage','edu','emp','sex','only_child','outcome'), stringsAsFactors = FALSE, newobj = 'pvalueext', datasources=c.data[c('INMA')])
+
+datashield.workspace_save(c.data, "pvalue_ext")
+
+c.data <- DSI::datashield.login(logins = logindata, restore="pvalue_ext")
+
+
+
+
+
+
+mothersage<-ds.glm('outcome~momage', data='pvalueext', family='binomial')
+mothersage
+
+ds.table(rvar="pvalueext$edu",cvar='pvalueext$outcome', exclude = 'NA', report.chisq.tests = TRUE)
+
+#high = 1  Medium = 2Low = 3
+
+ds.colnames('pvalueext')
+ds.table(rvar='pvalueext$emp',cvar='pvalueext$outcome', report.chisq.tests = TRUE)
+ds.table('pvalueext$emp', useNA = 'always')
+ds.table(rvar="pvalueext$divorce",cvar='pvalueext$outcome',exclude = 'NA', report.chisq.tests = TRUE, datasources=c.data[c('dnbc', 'eden', 'elfe', "alspac", "generationR")])
+ds.table(rvar="pvalueext$sex",cvar='pvalueext$outcome', exclude = 'NA', report.chisq.tests = TRUE)
+ds.table(rvar="pvalueext$only_child",cvar='pvalueext$outcome', exclude = 'NA', report.chisq.tests = TRUE)
+
+
+
+birthweight<-ds.glm('outcome~birthweight', data='pvalueext', family='binomial')
+birthweight
+
+################## descriptive statistics for included population in internalizing behavior
+
+ds.asNumeric("analysis_df_w_int$agebirth_m_y", newobj = 'momage_int')
+ds.mean("momage_int",type='combine')
+ds.quantileMean("momage_int",type='combine')
+ds.table("analysis_df_w_int$edu_m_.0", exclude='NA')
+#high = 1  Medium = 2Low = 3
+ds.asNumeric("analysis_df_w_int$int_pc_", newobj = 'intpc_int')
+ds.quantileMean("intpc_int",type='combine')
+ds.table("analysis_df_w_int$mom.emp.dich", exclude='NA')
+ds.table('analysis_df_w_int$femp_cat_mom_0', exclude='NA')
+ds.table("analysis_df_w_int$fam_splitup.0", exclude='NA')
+ds.table("analysis_df_w_int$sex", exclude='NA')
+ds.table("analysis_df_w_int$only_child", exclude='NA')
+ds.asNumeric("analysis_df_w_int$birth_weight", newobj = 'bw_int')
+ds.quantileMean("bw_int", type='combine')
+
+################## descriptive statistics for excluded population in internalizing behavior
+ds.asNumeric("excluded_df_w_int$agebirth_m_y", newobj = 'momage_int')
+ds.quantileMean("momage_int",type='combine')
+ds.mean("momage_int",type='combine')
+ds.table("excluded_df_w_int$edu_m_.0")
+#high = 1  Medium = 2Low = 3
+ds.asNumeric("excluded_df_w_int$int_pc_", newobj = 'intpc_int')
+ds.quantileMean("intpc_int",type='combine')
+ds.table("excluded_df_w_int$mom.emp.dich")
+ds.table('excluded_df_w_int$femp_cat_mom_0')
+
+ds.asNumeric(x.name="excluded_df_w_int$femp_cat_mom_0", newobj="test", datasources=c.data[c('eden')])
+ds.subset(x="test", subset="test2", logicalOperator="==", threshold = 2, datasources=c.data[c('eden')])
+ds.length('test2', datasources=c.data[c('eden')])
+# 5 that equal 0
+# 17 that equal 1
+# 2 that equal 2
+ds.table("excluded_df_w_int$femp_cat_mom_0") 
+ds.length("excluded_df_w_int$femp_cat_mom_0")
+# 26 total 
+ds.numNA("excluded_df_w_int$femp_cat_mom_0") 
+# 2 are missing
+
+
+
+
+
+# DOES NOT EXIST FOR EDEN? SET AS MISSING
+
+ds.table("excluded_df_w_int$fam_splitup.0") 
+
+ds.length("excluded_df_w_int$fam_splitup.0") 
+ds.numNA("excluded_df_w_int$fam_splitup.0") 
+
+         
+         
+ds.table("excluded_df_w_int$fam_splitup.0", datasources=c.data[c('elfe')])
+
+
+ds.asNumeric(x.name="excluded_df_w_int$fam_splitup.0", newobj="test", datasources=c.data[c('elfe')])
+ds.subset(x="test", subset="test2", logicalOperator="==", threshold = 0, datasources=c.data[c('elfe')])
+ds.length('test2', datasources=c.data[c('elfe')])
+# 369 of elfe is zero, and only 1 participant is 1 and then 38 missing
+
+ds.table("excluded_df_w_int$fam_splitup.0") 
+
+ds.length("excluded_df_w_int$fam_splitup.0") 
+ds.numNA("excluded_df_w_int$fam_splitup.0") 
+
+# does not exist for elfe? 408 where we dont know
+
+
+
+ds.table("excluded_df_w_int$sex")
+ds.table("excluded_df_w_int$only_child")
+ds.asNumeric("excluded_df_w_int$birth_weight", newobj = 'bw_int')
+ds.quantileMean("bw_int", type='combine')
+ds.mean("bw_int", type='combine')
+
+################## descriptive statistics for included population in externalizing behavior
+
+ds.asNumeric("analysis_df_w_ext$agebirth_m_y", newobj = 'momage_ext')
+ds.quantileMean("momage_ext",type='combine')
+ds.mean("momage_ext",type='combine')
+
+ds.table("analysis_df_w_ext$edu_m_.0", exclude='NA')
+#high = 1  Medium = 2Low = 3
+ds.asNumeric("analysis_df_w_ext$ext_pc_", newobj = 'intpc_int')
+ds.quantileMean("intpc_int",type='combine')
+ds.table('analysis_df_w_ext$femp_cat_mom_0', exclude='NA')
+ds.table("analysis_df_w_ext$fam_splitup.0", exclude='NA')
+ds.table("analysis_df_w_ext$sex", exclude='NA')
+ds.table("analysis_df_w_ext$only_child", exclude='NA')
+ds.asNumeric("analysis_df_w_ext$birth_weight", newobj = 'bw_ext')
+ds.quantileMean("bw_ext", type='combine')
+
+################## descriptive statistics for excluded population in externalizing behavior
+
+ds.asNumeric("excluded_df_w_ext$agebirth_m_y", newobj = 'momage_ext')
+ds.quantileMean("momage_ext",type='combine')
+ds.mean("momage_ext",type='combine')
+ds.table("excluded_df_w_ext$edu_m_.0")
+#high = 1  Medium = 2Low = 3
+ds.asNumeric("excluded_df_w_ext$int_pc_", newobj = 'intpc_int')
+ds.quantileMean("intpc_ext",type='combine')
+ds.table('excluded_df_w_ext$femp_cat_mom_0')
+
+ds.asNumeric(x.name="excluded_df_w_ext$femp_cat_mom_0", newobj="test", datasources=c.data[c('eden')])
+ds.subset(x="test", subset="test2", logicalOperator="==", threshold = 1, datasources=c.data[c('eden')])
+ds.length('test2', datasources=c.data[c('eden')])
+# 5 that equal 0
+# 16 that equal 1
+# 2 that equal 2
+ds.table("excluded_df_w_ext$femp_cat_mom_0") 
+ds.length("excluded_df_w_ext$femp_cat_mom_0")
+# 25 total 
+ds.numNA("excluded_df_w_ext$femp_cat_mom_0") 
+# 2 are missing
+
+
+
+ds.table("excluded_df_w_ext$fam_splitup.0")
+
+ds.asNumeric(x.name="excluded_df_w_ext$fam_splitup.0", newobj="test", datasources=c.data[c('elfe')])
+ds.subset(x="test", subset="test2", logicalOperator="==", threshold = 1, datasources=c.data[c('elfe')])
+ds.length('test2', datasources=c.data[c('elfe')])
+# 369 of elfe is zero, and only 1 participant is 1 and then 38 missing
+
+ds.table("excluded_df_w_ext$fam_splitup.0") 
+
+ds.length("excluded_df_w_ext$fam_splitup.0") 
+#408 TOTAL
+ds.numNA("excluded_df_w_ext$fam_splitup.0") 
+#38 MISSING
+
+ds.table("excluded_df_w_ext$sex")
+ds.table("excluded_df_w_ext$only_child")
+ds.asNumeric("excluded_df_w_ext$birth_weight", newobj = 'bw_ext')
+ds.quantileMean("bw_ext", type='combine')
+ds.mean("bw_ext", type='combine')
+
