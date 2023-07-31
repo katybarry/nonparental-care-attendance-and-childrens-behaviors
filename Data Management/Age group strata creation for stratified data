@@ -1,0 +1,455 @@
+# Project: Nonmaternal care attendance and children's externalizing and externalizing behavior
+# Script purpose: Strata formations for stratified data
+# Author: Katharine Barry 
+# Email: Katharine.Barry@inserm.fr
+
+#load libraries
+library(DSMolgenisArmadillo)
+library(dsBaseClient)
+library(dsHelper)
+library(DSI)
+library(DSOpal)
+
+#login to all cohorts
+
+## tokens
+
+tokenelfe <- armadillo.get_token("https://armadillo.sicopre.elfe-france.fr")
+tokeneden <- armadillo.get_token("https://armadillo.sicopre.elfe-france.fr")
+tokenalspac <- armadillo.get_token("https://alspac-armadillo.molgenis.org")
+
+#### login
+
+builder <- DSI::newDSLoginBuilder()
+
+#ALSPAC
+builder$append(
+  server = "alspac",
+  url = "https://alspac-armadillo.molgenis.org",
+  token = tokenalspac,
+  driver = "ArmadilloDriver")
+
+#GEN R
+builder$append(server = "generationR", 
+               url = "https://opal.erasmusmc.nl", user = "", 
+               password = "",
+               driver = "OpalDriver")
+
+# DNBC
+builder$append(server = "dnbc",
+               url = "https://opal.sund.ku.dk",
+               user ="",
+               password= "",
+               driver = "OpalDriver" )
+#EDEN
+builder$append(server ="eden",
+               url="https://armadillo.sicopre.elfe-france.fr",
+               token=tokeneden,
+               driver="ArmadilloDriver")
+# INMA
+builder$append(server = "INMA", 
+               url = "https://opal.isglobal.org/repo", 
+               user = "", 
+               password = "",
+               driver = "OpalDriver",
+               profile='rock-inma')
+# ELFE
+builder$append(server ="elfe",
+               url="https://armadillo.sicopre.elfe-france.fr",
+               token=tokenelfe,
+               driver="ArmadilloDriver")
+# all login
+logindata <- builder$build()
+
+
+
+c.data <- DSI::datashield.login(logins = logindata, restore="sex_int")
+
+
+
+# stratify sex for internalizing behavior
+dh.makeStrata(
+  df = "girls_data",
+  var_to_subset = "n.int_pc_",
+  age_var = "n.int_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0','n.agebirth_m_y', 'f.only_child', 'f.edu_m_.0','f.femp_cat_mom_0', 'f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "int_girls",
+  conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+
+ds.colnames('int_girls', datasources = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+ds.dim('int_girls', datasources = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+
+datashield.workspace_save(conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')], ws = "int_strata_girls")
+
+dh.makeStrata(
+  df = "girls_data",
+  var_to_subset = "n.int_pc_",
+  age_var = "n.int_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0', 'n.agebirth_m_y', 'f.only_child', 'f.edu_m_.0','f.mom.emp.dich','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "int_girls",
+  conns = c.data[c('alspac')])
+
+datashield.workspace_save(conns = c.data[c('alspac')], ws = "int_strata_girls")
+
+
+dh.makeStrata(
+  df = "girls_data",
+  var_to_subset = "n.int_pc_",
+  age_var = "n.int_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('n.agebirth_m_y', 'f.only_child', 'f.edu_m_.0','f.femp_cat_mom_0', 'f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "int_girls",
+  conns = c.data[c('INMA')])
+
+
+datashield.workspace_save(conns = c.data[c('INMA')], ws = "int_strata_girls")
+
+
+## boys stratification
+
+dh.makeStrata(
+  df = "boys_data",
+  var_to_subset = "n.int_pc_",
+  age_var = "n.int_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0','n.agebirth_m_y', 'f.only_child', 'f.edu_m_.0','f.femp_cat_mom_0', 'f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "int_boys",
+  conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+
+ds.colnames('int_boys', datasources = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+ds.dim('int_boys', datasources = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+
+datashield.workspace_save(conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')], ws = "int_strata_boys")
+
+dh.makeStrata(
+  df = "boys_data",
+  var_to_subset = "n.int_pc_",
+  age_var = "n.int_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0', 'n.agebirth_m_y', 'f.only_child', 'f.edu_m_.0','f.mom.emp.dich','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "int_boys",
+  conns = c.data[c('alspac')])
+
+datashield.workspace_save(conns = c.data[c('alspac')], ws = "int_strata_boys")
+
+
+dh.makeStrata(
+  df = "boys_data",
+  var_to_subset = "n.int_pc_",
+  age_var = "n.int_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('n.agebirth_m_y', 'f.only_child', 'f.edu_m_.0','f.femp_cat_mom_0', 'f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "int_boys",
+  conns = c.data[c('INMA')])
+
+
+datashield.workspace_save(conns = c.data[c('INMA')], ws = "int_strata_boys")
+
+#------------------------------------------------------------------------------
+
+# stratify sex for externalizing behavior
+
+c.data <- DSI::datashield.login(logins = logindata, restore="sex_ext")
+
+
+dh.makeStrata(
+  df = "girls_data",
+  var_to_subset = "n.ext_pc_",
+  age_var = "n.ext_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0','n.agebirth_m_y', 'f.only_child', 'f.edu_m_.0','f.femp_cat_mom_0', 'f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "ext_girls",
+  conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+
+ds.colnames('ext_girls', datasources = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+ds.dim('ext_girls', datasources = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+
+datashield.workspace_save(conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')], ws = "ext_strata_girls")
+
+dh.makeStrata(
+  df = "girls_data",
+  var_to_subset = "n.ext_pc_",
+  age_var = "n.ext_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0', 'n.agebirth_m_y', 'f.only_child', 'f.edu_m_.0','f.mom.emp.dich','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "ext_girls",
+  conns = c.data[c('alspac')])
+
+datashield.workspace_save(conns = c.data[c('alspac')], ws = "ext_strata_girls")
+
+
+dh.makeStrata(
+  df = "girls_data",
+  var_to_subset = "n.ext_pc_",
+  age_var = "n.ext_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('n.agebirth_m_y', 'f.only_child', 'f.edu_m_.0','f.femp_cat_mom_0', 'f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "ext_girls",
+  conns = c.data[c('INMA')])
+
+
+datashield.workspace_save(conns = c.data[c('INMA')], ws = "ext_strata_girls")
+
+
+## boys stratification
+
+dh.makeStrata(
+  df = "boys_data",
+  var_to_subset = "n.ext_pc_",
+  age_var = "n.ext_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0','n.agebirth_m_y', 'f.only_child', 'f.edu_m_.0','f.femp_cat_mom_0', 'f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "ext_boys",
+  conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+
+ds.colnames('ext_boys', datasources = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+ds.dim('ext_boys', datasources = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+
+datashield.workspace_save(conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')], ws = "ext_strata_boys")
+
+dh.makeStrata(
+  df = "boys_data",
+  var_to_subset = "n.ext_pc_",
+  age_var = "n.ext_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0', 'n.agebirth_m_y', 'f.only_child', 'f.edu_m_.0','f.mom.emp.dich','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "ext_boys",
+  conns = c.data[c('alspac')])
+
+datashield.workspace_save(conns = c.data[c('alspac')], ws = "ext_strata_boys")
+
+
+dh.makeStrata(
+  df = "boys_data",
+  var_to_subset = "n.ext_pc_",
+  age_var = "n.ext_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('n.agebirth_m_y', 'f.only_child', 'f.edu_m_.0','f.femp_cat_mom_0', 'f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "ext_boys",
+  conns = c.data[c('INMA')])
+
+
+datashield.workspace_save(conns = c.data[c('INMA')], ws = "ext_strata_boys")
+
+
+
+#------------------------------------------------------------------------------
+
+# stratify for mother's educational level in internalizing behavior
+
+c.data <- DSI::datashield.login(logins = logindata, restore="mom_edu_int")
+
+dh.makeStrata(
+  df = "high_edu",
+  var_to_subset = "n.int_pc_",
+  age_var = "n.int_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0','n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.femp_cat_mom_0','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "high_int",
+  conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+
+datashield.workspace_save(conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')], ws = "highmomedu_int")
+
+
+dh.makeStrata(
+  df = "high_edu",
+  var_to_subset = "n.int_pc_",
+  age_var = "n.int_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0','n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.mom.emp.dich','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "high_int",
+  conns = c.data[c('alspac')])
+datashield.workspace_save(conns = c.data[c('alspac')], ws = "highmomedu_int")
+
+dh.makeStrata(
+  df = "high_edu",
+  var_to_subset = "n.int_pc_",
+  age_var = "n.int_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.femp_cat_mom_0','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "high_int",
+  conns = c.data[c('INMA')])
+datashield.workspace_save(conns = c.data[c('INMA')], ws = "highmomedu_int")
+
+
+## lower educational level
+
+dh.makeStrata(
+  df = "low_edu",
+  var_to_subset = "n.int_pc_",
+  age_var = "n.int_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0','n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.femp_cat_mom_0','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "low_int",
+  conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+
+datashield.workspace_save(conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')], ws = "momedu_int")
+
+
+
+
+dh.makeStrata(
+  df = "low_edu",
+  var_to_subset = "n.int_pc_",
+  age_var = "n.int_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0','n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.mom.emp.dich','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "low_int",
+  conns = c.data[c('alspac')])
+
+datashield.workspace_save(conns = c.data[c('alspac')], ws = "momedu_int")
+
+
+dh.makeStrata(
+  df = "low_edu",
+  var_to_subset = "n.int_pc_",
+  age_var = "n.int_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.femp_cat_mom_0','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "low_int",
+  conns = c.data[c('INMA')])
+
+datashield.workspace_save(conns = c.data[c('INMA')], ws = "momedu_int")
+
+
+
+
+#----------------------------------------------------------------------
+
+# stratify for externalizing behavior 
+
+c.data <- DSI::datashield.login(logins = logindata, restore="mom_edu_ext")
+
+dh.makeStrata(
+  df = "high_edu",
+  var_to_subset = "n.ext_pc_",
+  age_var = "n.ext_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0','n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.femp_cat_mom_0','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "high_ext",
+  conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+
+dh.makeStrata(
+  df = "high_edu",
+  var_to_subset = "n.ext_pc_",
+  age_var = "n.ext_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0','n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.mom.emp.dich','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "high_ext",
+  conns = c.data[c('alspac')])
+
+dh.makeStrata(
+  df = "high_edu",
+  var_to_subset = "n.ext_pc_",
+  age_var = "n.ext_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.femp_cat_mom_0','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "high_ext",
+  conns = c.data[c('INMA')])
+
+## lower educational level
+
+dh.makeStrata(
+  df = "low_edu",
+  var_to_subset = "n.ext_pc_",
+  age_var = "n.ext_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0','n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.femp_cat_mom_0','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "low_ext",
+  conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+
+dh.makeStrata(
+  df = "low_edu",
+  var_to_subset = "n.ext_pc_",
+  age_var = "n.ext_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0','n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.mom.emp.dich','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "low_ext",
+  conns = c.data[c('alspac')])
+
+dh.makeStrata(
+  df = "low_edu",
+  var_to_subset = "n.ext_pc_",
+  age_var = "n.ext_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.femp_cat_mom_0','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "low_ext",
+  conns = c.data[c('INMA')])
+
+
+datashield.workspace_save(conns = c.data, ws = "momedu_ext")
+
