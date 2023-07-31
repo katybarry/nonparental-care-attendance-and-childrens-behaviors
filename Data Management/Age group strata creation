@@ -1,0 +1,257 @@
+#### create stratas#######
+
+#load libraries
+library(DSMolgenisArmadillo)
+library(dsBaseClient)
+library(dsHelper)
+library(DSI)
+library(DSOpal)
+
+
+#load libraries
+library(DSMolgenisArmadillo)
+library(dsBaseClient)
+library(dsHelper)
+library(DSI)
+library(DSOpal)
+
+#login to all cohorts
+
+## tokens
+
+tokenelfe <- armadillo.get_token("https://armadillo.sicopre.elfe-france.fr")
+tokeneden <- armadillo.get_token("https://armadillo.sicopre.elfe-france.fr")
+tokenalspac <- armadillo.get_token("https://alspac-armadillo.molgenis.org")
+
+#### login
+
+builder <- DSI::newDSLoginBuilder()
+
+#ALSPAC
+builder$append(
+  server = "alspac",
+  url = "https://alspac-armadillo.molgenis.org",
+  token = tokenalspac,
+  driver = "ArmadilloDriver")
+
+#GEN R
+builder$append(server = "generationR", 
+               url = "https://opal.erasmusmc.nl", user = "", 
+               password = "",
+               driver = "OpalDriver")
+
+# DNBC
+builder$append(server = "dnbc",
+               url = "https://opal.sund.ku.dk",
+               user ="",
+               password= "",
+               driver = "OpalDriver" )
+#EDEN
+builder$append(server ="eden",
+               url="https://armadillo.sicopre.elfe-france.fr",
+               token=tokeneden,
+               driver="ArmadilloDriver")
+# INMA
+builder$append(server = "INMA", 
+               url = "https://opal.isglobal.org/repo", 
+               user = "", 
+               password = "",
+               driver = "OpalDriver",
+               profile='rock-inma')
+# ELFE
+builder$append(server ="elfe",
+               url="https://armadillo.sicopre.elfe-france.fr",
+               token=tokenelfe,
+               driver="ArmadilloDriver")
+# all login
+logindata <- builder$build()
+
+c.data <- DSI::datashield.login(logins = logindata, restore="all_pop_defined_some")
+
+## internalizing dataset
+ds.colnames("analysis_df_l_int")
+## externalizing dataset
+ds.colnames('analysis_df_l_ext')
+
+
+
+#######################################################################################################################
+#######################################################################################################################
+
+# prepare data to make age categories 
+ds.quantileMean('analysis_df_l_int$n.int_age_', type = "split")
+
+# scatter plot to look at distribution of internalizing behavior measures
+ds.scatterPlot(
+  x = "analysis_df_l_int$n.int_age_", 
+  y = "analysis_df_l_int$n.int_pc_", 
+  datasources = c.data)
+
+ds.histogram(
+  x = "analysis_df_l_int$n.int_age_",
+  type = "split",
+  method = "smallCellsRule",
+  k = 3,
+  noise = 0.25,
+  vertical.axis = "Frequency",
+  datasources = c.data
+)
+
+ds.histogram(
+  x = "analysis_df_l_ext$n.ext_age_",
+  type = "split",
+  method = "smallCellsRule",
+  k = 3,
+  noise = 0.25,
+  vertical.axis = "Frequency",
+  datasources = c.data
+)
+# based on what we see, the age brackets will be as follows
+# 5-6, 7-9, 10-13
+
+library('stringr')
+ds.colnames('analysis_df_l_int')
+
+# different variable names so have to divide up strata maker
+dh.makeStrata(
+  df = "analysis_df_l_int",
+  var_to_subset = "n.int_pc_",
+  age_var = "n.int_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0','n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.edu_m_.0','f.femp_cat_mom_0','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "int_data",
+  conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+
+
+ds.colnames('int_data', datasources = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+ds.dim('int_data', datasources = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+
+ds.mean('analysis_df_w_int$int_pc_.7', datasources = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+ds.mean('analysis_df_w_int$int_pc_.8', datasources = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+ds.mean('analysis_df_w_int$int_pc_.9', datasources = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+ds.mean('int_data$n.int_pc_.7_10', datasources = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+ds.mean('int_data$n.int_pc_.10_14', datasources = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+
+
+datashield.workspace_save(conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')], ws = "int_strata_some")
+
+dh.makeStrata(
+  df = "analysis_df_l_int",
+  var_to_subset = "n.int_pc_",
+  age_var = "n.int_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0', 'n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.edu_m_.0','f.mom.emp.dich','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "int_data",
+  conns = c.data[c('alspac')])
+
+ds.colnames('int_data', datasources = c.data[c('alspac')])
+ds.dim('int_data', datasources = c.data[c('alspac')])
+
+dh.makeStrata(
+  df = "analysis_df_l_int",
+  var_to_subset = "n.int_pc_",
+  age_var = "n.int_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.edu_m_.0','f.femp_cat_mom_0','f.some_care', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "int_data",
+  conns = c.data[c('INMA')])
+
+ds.colnames('analysis_df_l_int')
+ds.colnames("int_data")
+ds.dim("int_data")
+ds.dim("analysis_df_w_int")
+
+datashield.workspace_save(conns = c.data[c('INMA', 'alspac','dnbc', 'eden', 'elfe', 'generationR')], ws = "int_strata_some")
+
+
+
+#####################################################################################################################################
+#####################################################################################################################################
+#####################################################################################################################################
+#####################################################################################################################################
+#####################################################################################################################################
+
+
+#c.data <- DSI::datashield.login(logins = logindata, restore="int_strata_some")
+
+
+
+
+# prepare data to make age categories 
+ds.quantileMean('analysis_df_l_ext$n.ext_age_', type = "split")
+
+# scatter plot to look at distribution of externalizing behavior measures
+ds.scatterPlot(
+  x = "analysis_df_l_ext$n.ext_age_", 
+  y = "analysis_df_l_ext$n.ext_pc_", 
+  datasources = c.data)
+
+# based on what we see, the age brackets will be as follows
+# 5-6, 7-9, 10-12, 13-18
+
+library('stringr')
+
+ds.colnames('analysis_df_l_ext')
+
+# different variable names so have to divide up strata maker
+dh.makeStrata(
+  df = "analysis_df_l_ext",
+  var_to_subset = "n.ext_pc_",
+  age_var = "n.ext_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0',  'n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.edu_m_.0','f.some_care','f.femp_cat_mom_0', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "ext_data",
+  conns = c.data[c('dnbc', 'eden', 'elfe', 'generationR')])
+
+ds.colnames('ext_data', datasources = c.data[c('dnbc', 'eden', 'elfe')])
+ds.dim('ext_data', datasources = c.data[c('dnbc', 'eden', 'elfe')])
+
+
+dh.makeStrata(
+  df = "analysis_df_l_ext",
+  var_to_subset = "n.ext_pc_",
+  age_var = "n.ext_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('f.fam_splitup.0',  'n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.edu_m_.0','f.some_care','f.mom.emp.dich', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "ext_data",
+  conns = c.data[c('alspac')])
+ds.colnames('ext_data', datasources = c.data[c('alspac')])
+ds.dim('ext_data', datasources = c.data[c('alspac')])
+
+dh.makeStrata(
+  df = "analysis_df_l_ext",
+  var_to_subset = "n.ext_pc_",
+  age_var = "n.ext_age_", 
+  bands = c(5, 7, 7, 10, 10, 14), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  keep_vars = c('n.agebirth_m_y', 'f.only_child', 'f.sex', 'f.edu_m_.0','f.some_care','f.femp_cat_mom_0', 'f.type_care', 'n.birth_weight'), 
+  id_var = "n.child_id", 
+  new_obj = "ext_data",
+  conns = c.data[c('INMA')])
+
+ds.colnames('ext_data', datasources = c.data[c('INMA')])
+ds.dim('ext_data', datasources = c.data[c('INMA')])
+
+datashield.workspace_save(conns = c.data[c('INMA', 'alspac', 'dnbc', 'eden', 'elfe', 'generationR')], ws = "strata_some")
+
+ds.colnames("ext_data")
+ds.dim('ext_data')
+ds.dim('int_data')
+
+
