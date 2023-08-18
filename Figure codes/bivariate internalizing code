@@ -1,0 +1,84 @@
+
+
+Figure2 <- tibble(
+  age_bracket=c('5-6 years (N= 16 932, 81.40%)',
+                '7-9 years (N= 42 575, 77.50%)',
+                '10-13 years (N= 34 692, 77.40%)',
+                
+                '5-6 years (N= 5862, 28.20%)',
+                '7-9 years (N= 14 524, 26.40%)',
+                '10-13 years (N= 11 259, 25.1%)',
+                
+                '5-6 years (N= 16 932, 81.40%)',
+                '7-9 years (N= 42 575, 77.50%)',
+                '10-13 years (N= 34 036, 77.20%)'
+                
+                ),
+  estimates=c(-0.20, 0.08, 0.16,-1.13, -1.38, -1.06,0.02, 0.91, 0.52),
+  low_ci=c(-2.20, -0.56, -0.80,-2.68, -2.85, -1.95,-1.96, 0.23, -0.23),
+  high_ci=c(1.81, 0.72, 1.12,0.42, 0.10, -0.17,2.01, 1.58, 1.27),
+  p_value=c(0.85, 0.81, 0.74,0.15, 0.07,0.02,0.98, 0.009,0.17),
+  studies=c('4','5','3','4','5','3','4','4','2'),
+  heterogeneity=c(
+    'Q=5.66, df=3, p=0.13; I^2=49.2%, H^2=1.97',
+    'Q=2.64, df=4, p=0.62; I^2=0.0%, H^2=1.00',
+    'Q=1.46, df=2, p=0.48; I^2=14.6%, H^2=1.17',
+    
+    'Q=1.97, df=3, p=0.58; I^2=0.0%, H^2=1.00 ',
+    'Q=4.62, df=4, p=0.33; I^2=17.3%, H^2=1.21',
+    'Q=1.04, df=2, p=0.59; I^2=0.0%, H^2=1.00',
+    
+    'Q=5.39, df=3, p=0.15; I^2=46.3%, H^2=1.86',
+    'Q=0.87, df=3, p=0.83; I^2=0.0%, H^2=1.00',
+    'Q=0.50, df=1, p=0.48; I^2=0.0%, H^2=1.00'))
+
+
+
+png(
+  file = "Figure2.png",
+  width = 35,
+  height = 16,
+  units = "cm",
+  res = 300)
+par(mar=c(5,0,0,0))
+age_pos = -36
+est_pos = -17
+p_pos = -16
+het_pos = 15
+st_pos = 10
+height = 16
+
+forest(
+  x = Figure2 %>% pull(estimates),
+  ci.lb = Figure2 %>% pull(low_ci),
+  ci.ub = Figure2 %>% pull(high_ci),
+  slab = Figure2 %>% pull(age_bracket),
+  xlab = "Beta Coefficient (95% CI)",
+  rows=c(11:9, 7:5, 3:1),
+  ilab =  cbind(
+    Figure2 %>% pull(p_value),
+    Figure2 %>% pull(heterogeneity),
+    Figure2 %>% pull(studies)),
+  textpos = c(age_pos, est_pos),
+  ilab.xpos = c(p_pos, het_pos, st_pos),
+  ilab.pos = 4,
+  cex = 0.8,
+  cex.axis = 0.8,
+  refline = 0,
+  xlim = c(-36.0, 28),
+  ylim = c(0, height),
+  alim = c(-10, 10),
+  steps = 3,
+  digits = c(2, 2),
+  psize = 1.2,
+  font = "arial")
+
+text(age_pos, height-1, "Age group (N Attended, %)",font=2, cex = 0.8, pos = 4)
+text(age_pos, height-4, "All nonparental care attendance",font=3, cex = 0.8, pos = 4)
+text(age_pos, height-8, "Centre-based care attendance",font=3, cex = 0.8, pos = 4)
+text(age_pos, height-12, "Other nonparental care attendance",font=3, cex = 0.8, pos = 4)
+text(est_pos, height-1, "Estimate [95% CI]", font=2, cex = 0.8, pos = 2)
+text(p_pos, height-1, "P-value",font=2, cex = 0.8, pos = 4)
+text(st_pos-2, height-1, "Number of studies",font=2, cex = 0.8, pos = 4)
+text(het_pos, height-1, "Heterogeneity",font=2, cex = 0.8, pos = 4)
+dev.off()
