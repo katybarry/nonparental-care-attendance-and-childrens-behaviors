@@ -1,0 +1,1826 @@
+#likelihood ratio test
+
+#interaction test
+library(DSMolgenisArmadillo)
+library(dsBaseClient)
+library(dsHelper)
+library(DSI)
+library(DSOpal)
+
+#login to all cohorts
+
+
+###################### INTERNALIZING BEHAVIOR ##############################################
+############################################################################################
+#### we can see from this which cohorts are in which age brackets in internalizing behavior
+c.data <- DSI::datashield.login(logins = logindata, restore="strata_some")
+
+### testing for sex interaction first. Need to have the model with the interaction and then the model without the interaction
+
+
+################### this is for center-based care ###################################################
+
+# without interaction
+
+mod1 <- ds.glm(formula = "n.int_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.sex.5_7+ f.edu_m_.0.5_7+ f.mom.emp.dich.5_7",
+                             data = "int_data",
+                             family = "gaussian",
+                             datasources = c.data[c('alspac')])
+
+# with interaction
+
+mod2 <- ds.glm(formula = "n.int_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.sex.5_7+ f.edu_m_.0.5_7+ f.mom.emp.dich.5_7+ f.sex.5_7*f.type_care.5_7",
+               data = "int_data",
+                             family = "gaussian",
+                             datasources = c.data[c('alspac')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+# So p = 0.24
+
+
+
+
+
+
+
+
+#genr
+mod1 <- ds.glm(formula = "n.int_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.sex.5_7+ f.edu_m_.0.5_7+ f.femp_cat_mom_0.5_7",
+                           data = "int_data",
+                           family = "gaussian",
+                           datasources = c.data[c('generationR')])
+
+
+mod2 <- ds.glm(formula = "n.int_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.sex.5_7+ f.edu_m_.0.5_7+ f.femp_cat_mom_0.5_7+ f.sex.5_7*f.type_care.5_7",
+               data = "int_data",
+               family = "gaussian",
+               datasources = c.data[c('generationR')])
+
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.40
+
+
+
+
+
+#eden
+mod1 <- ds.glm(formula = "n.int_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.sex.5_7+ f.edu_m_.0.5_7+ f.femp_cat_mom_0.5_7",
+                           data = "int_data",
+                           family = "gaussian",
+                           datasources = c.data[c('eden')])
+
+mod2 <- ds.glm(formula = "n.int_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.sex.5_7+ f.edu_m_.0.5_7+ f.femp_cat_mom_0.5_7+ f.sex.5_7*f.type_care.5_7",
+                           data = "int_data",
+                           family = "gaussian",
+                           datasources = c.data[c('eden')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.14
+
+#elfe
+
+mod1 <- ds.glm(formula = "n.int_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.sex.5_7+ f.edu_m_.0.5_7+ f.femp_cat_mom_0.5_7",
+                           data = "int_data",
+                           family = "gaussian",
+                           datasources = c.data[c('elfe')])
+
+
+
+mod2 <- ds.glm(formula = "n.int_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.sex.5_7+ f.edu_m_.0.5_7+ f.femp_cat_mom_0.5_7+ f.sex.5_7*f.type_care.5_7",
+               data = "int_data",
+               family = "gaussian",
+               datasources = c.data[c('elfe')])
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.08
+
+
+
+
+#########################
+#########################  7 to 9 years
+
+
+
+
+
+
+
+mod1 <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.sex.7_10+ f.edu_m_.0.7_10+ f.mom.emp.dich.7_10",
+                             data = "int_data",
+                             family = "gaussian",
+                             datasources = c.data[c('alspac')])
+
+
+mod2 <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.sex.7_10+ f.edu_m_.0.7_10+ f.mom.emp.dich.7_10+ f.sex.7_10*f.type_care.7_10",
+               data = "int_data",
+               family = "gaussian",
+               datasources = c.data[c('alspac')])
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.001
+
+
+
+
+
+
+
+
+#genr
+mod1 <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.sex.7_10+ f.edu_m_.0.7_10+ f.femp_cat_mom_0.7_10",
+                           data = "int_data",
+                           family = "gaussian",
+                           datasources = c.data[c('generationR')])
+
+mod2 <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.sex.7_10+ f.edu_m_.0.7_10+ f.femp_cat_mom_0.7_10+ f.sex.7_10*f.type_care.7_10",
+                           data = "int_data",
+                           family = "gaussian",
+                           datasources = c.data[c('generationR')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.04
+
+
+
+
+
+
+
+#dnbc
+mod1  <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+f.fam_splitup.0.7_10+f.sex.7_10+f.femp_cat_mom_0.7_10+n.birth_weight.7_10+f.only_child.7_10+n.agebirth_m_y.7_10",
+                           data = "int_data",
+                           family = "gaussian",
+                           datasources = c.data[c('dnbc')])
+
+mod2  <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+f.fam_splitup.0.7_10+f.sex.7_10+f.femp_cat_mom_0.7_10+n.birth_weight.7_10+f.only_child.7_10+n.agebirth_m_y.7_10+ f.sex.7_10*f.type_care.7_10",
+                data = "int_data",
+                family = "gaussian",
+                datasources = c.data[c('dnbc')])
+
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.11
+
+
+
+
+
+
+# INMA
+
+mod1 <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+ f.only_child.7_10+ f.sex.7_10+ f.edu_m_.0.7_10+ f.femp_cat_mom_0.7_10",
+                           data = "int_data",
+                           family = "gaussian",
+                           datasources = c.data[c('INMA')])
+
+mod2 <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+ f.only_child.7_10+ f.sex.7_10+ f.edu_m_.0.7_10+ f.femp_cat_mom_0.7_10+ f.sex.7_10*f.type_care.7_10",
+               data = "int_data",
+               family = "gaussian",
+               datasources = c.data[c('INMA')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.95
+
+# EDEN
+
+mod1 <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.sex.7_10+ f.edu_m_.0.7_10+ f.femp_cat_mom_0.7_10",
+                           data = "int_data",
+                           family = "gaussian",
+                           datasources = c.data[c('eden')])
+mod2 <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.sex.7_10+ f.edu_m_.0.7_10+ f.femp_cat_mom_0.7_10+ f.sex.7_10*f.type_care.7_10",
+               data = "int_data",
+               family = "gaussian",
+               datasources = c.data[c('eden')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#0.59
+
+
+
+################## 10 to 13 years
+
+mod1<- ds.glm(formula = "n.int_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.sex.10_14+ f.edu_m_.0.10_14+ f.mom.emp.dich.10_14",
+                               data = "int_data",
+                               family = "gaussian",
+                               datasources = c.data[c('alspac')])
+
+mod2<- ds.glm(formula = "n.int_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.sex.10_14+ f.edu_m_.0.10_14+ f.mom.emp.dich.10_14+ f.sex.10_14*f.type_care.10_14",
+              data = "int_data",
+              family = "gaussian",
+              datasources = c.data[c('alspac')])
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#0.04
+
+
+
+
+#dnbc
+mod1 <- ds.glm(formula = "n.int_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.sex.10_14+ f.edu_m_.0.10_14+ f.femp_cat_mom_0.10_14",
+                             data = "int_data",
+                             family = "gaussian",
+                             datasources = c.data[c('dnbc')])
+
+mod2 <- ds.glm(formula = "n.int_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.sex.10_14+ f.edu_m_.0.10_14+ f.femp_cat_mom_0.10_14+ f.sex.10_14*f.type_care.10_14",
+               data = "int_data",
+               family = "gaussian",
+               datasources = c.data[c('dnbc')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#0.39
+
+
+# INMA
+
+mod1 <- ds.glm(formula = "n.int_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+f.only_child.10_14+ f.sex.10_14+ f.edu_m_.0.10_14+ f.femp_cat_mom_0.10_14",
+                             data = "int_data",
+                             family = "gaussian",
+                             datasources = c.data[c('INMA')])
+
+
+mod2 <- ds.glm(formula = "n.int_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+f.only_child.10_14+ f.sex.10_14+ f.edu_m_.0.10_14+ f.femp_cat_mom_0.10_14+ f.sex.10_14*f.type_care.10_14",
+                             data = "int_data",
+                             family = "gaussian",
+                             datasources = c.data[c('INMA')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#0.05
+
+
+mod1 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.sex.5_7+ f.edu_m_.0.5_7+ f.mom.emp.dich.5_7",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('alspac')])
+
+# with exteraction
+
+mod2 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.sex.5_7+ f.edu_m_.0.5_7+ f.mom.emp.dich.5_7+ f.sex.5_7*f.type_care.5_7",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('alspac')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+# So p = 0.16
+
+
+
+
+
+
+
+
+#genr
+mod1 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.sex.5_7+ f.edu_m_.0.5_7+ f.femp_cat_mom_0.5_7",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('generationR')])
+
+
+mod2 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.sex.5_7+ f.edu_m_.0.5_7+ f.femp_cat_mom_0.5_7+ f.sex.5_7*f.type_care.5_7",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('generationR')])
+
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.38
+
+
+
+
+
+#eden
+mod1 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.sex.5_7+ f.edu_m_.0.5_7+ f.femp_cat_mom_0.5_7",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('eden')])
+
+mod2 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.sex.5_7+ f.edu_m_.0.5_7+ f.femp_cat_mom_0.5_7+ f.sex.5_7*f.type_care.5_7",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('eden')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.20
+
+#elfe
+
+mod1 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.sex.5_7+ f.edu_m_.0.5_7+ f.femp_cat_mom_0.5_7",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('elfe')])
+
+
+
+mod2 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.sex.5_7+ f.edu_m_.0.5_7+ f.femp_cat_mom_0.5_7+ f.sex.5_7*f.type_care.5_7",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('elfe')])
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.07
+
+
+
+
+#########################
+#########################  7 to 9 years
+
+
+
+
+
+
+
+mod1 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.sex.7_10+ f.edu_m_.0.7_10+ f.mom.emp.dich.7_10",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('alspac')])
+
+
+mod2 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.sex.7_10+ f.edu_m_.0.7_10+ f.mom.emp.dich.7_10+ f.sex.7_10*f.type_care.7_10",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('alspac')])
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.16
+
+
+
+
+
+
+
+
+#genr
+mod1 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.sex.7_10+ f.edu_m_.0.7_10+ f.femp_cat_mom_0.7_10",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('generationR')])
+
+mod2 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.sex.7_10+ f.edu_m_.0.7_10+ f.femp_cat_mom_0.7_10+ f.sex.7_10*f.type_care.7_10",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('generationR')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.18
+
+
+
+
+
+
+
+#dnbc
+mod1  <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+f.fam_splitup.0.7_10+f.sex.7_10+f.femp_cat_mom_0.7_10+n.birth_weight.7_10+f.only_child.7_10+n.agebirth_m_y.7_10",
+                data = "ext_data",
+                family = "gaussian",
+                datasources = c.data[c('dnbc')])
+
+mod2  <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+f.fam_splitup.0.7_10+f.sex.7_10+f.femp_cat_mom_0.7_10+n.birth_weight.7_10+f.only_child.7_10+n.agebirth_m_y.7_10+ f.sex.7_10*f.type_care.7_10",
+                data = "ext_data",
+                family = "gaussian",
+                datasources = c.data[c('dnbc')])
+
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.18
+
+
+
+
+
+
+# INMA
+
+mod1 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+ f.only_child.7_10+ f.sex.7_10+ f.edu_m_.0.7_10+ f.femp_cat_mom_0.7_10",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('INMA')])
+
+mod2 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+ f.only_child.7_10+ f.sex.7_10+ f.edu_m_.0.7_10+ f.femp_cat_mom_0.7_10+ f.sex.7_10*f.type_care.7_10",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('INMA')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.88
+
+# EDEN
+
+mod1 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.sex.7_10+ f.edu_m_.0.7_10+ f.femp_cat_mom_0.7_10",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('eden')])
+mod2 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.sex.7_10+ f.edu_m_.0.7_10+ f.femp_cat_mom_0.7_10+ f.sex.7_10*f.type_care.7_10",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('eden')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#0.50
+
+
+
+################## 10 to 13 years
+
+mod1<- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.sex.10_14+ f.edu_m_.0.10_14+ f.mom.emp.dich.10_14",
+              data = "ext_data",
+              family = "gaussian",
+              datasources = c.data[c('alspac')])
+
+mod2<- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.sex.10_14+ f.edu_m_.0.10_14+ f.mom.emp.dich.10_14+ f.sex.10_14*f.type_care.10_14",
+              data = "ext_data",
+              family = "gaussian",
+              datasources = c.data[c('alspac')])
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#0.62
+
+
+
+
+#dnbc
+mod1 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.sex.10_14+ f.edu_m_.0.10_14+ f.femp_cat_mom_0.10_14",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('dnbc')])
+
+mod2 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.sex.10_14+ f.edu_m_.0.10_14+ f.femp_cat_mom_0.10_14+ f.sex.10_14*f.type_care.10_14",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('dnbc')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#0.05
+
+
+# INMA
+
+mod1 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+f.only_child.10_14+ f.sex.10_14+ f.edu_m_.0.10_14+ f.femp_cat_mom_0.10_14",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('INMA')])
+
+
+mod2 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+f.only_child.10_14+ f.sex.10_14+ f.edu_m_.0.10_14+ f.femp_cat_mom_0.10_14+ f.sex.10_14*f.type_care.10_14",
+               data = "ext_data",
+               family = "gaussian",
+               datasources = c.data[c('INMA')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#0.50
+
+# test interaction with socioeconomic position
+
+################### this is for center-based care ###################################################
+c.data <- DSI::datashield.login(logins = logindata, restore="int_momedu")
+
+# without interaction
+
+mod1 <- ds.glm(formula = "n.int_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ f.sex.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.mom_high_5_7+ f.mom.emp.dich.5_7",
+               data = "mom_edu57",
+               family = "gaussian",
+               datasources = c.data[c('alspac')])
+
+# with interaction
+
+mod2 <- ds.glm(formula = "n.int_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ f.sex.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.mom_high_5_7+ f.mom.emp.dich.5_7+ f.mom_high_5_7*f.type_care.5_7",
+               data = "mom_edu57",
+               family = "gaussian",
+               datasources = c.data[c('alspac')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+# So p = 0.05
+
+
+#genr
+mod1 <- ds.glm(formula = "n.int_pc_.5_7 ~ f.type_care.5_7+f.sex.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.mom_high_5_7+ f.femp_cat_mom_0.5_7",
+               data = "mom_edu57",
+               family = "gaussian",
+               datasources = c.data[c('generationR')])
+
+
+mod2 <- ds.glm(formula = "n.int_pc_.5_7 ~ f.type_care.5_7+ f.sex.5_7+n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.mom_high_5_7+ f.femp_cat_mom_0.5_7+ f.mom_high_5_7*f.type_care.5_7",
+               data = "mom_edu57",
+               family = "gaussian",
+               datasources = c.data[c('generationR')])
+
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.59
+
+
+
+
+
+#eden
+mod1 <- ds.glm(formula = "n.int_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.mom_high_5_7+ f.sex.5_7+ f.femp_cat_mom_0.5_7",
+               data = "mom_edu57",
+               family = "gaussian",
+               datasources = c.data[c('eden')])
+
+mod2 <- ds.glm(formula = "n.int_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.mom_high_5_7+ f.sex.5_7+ f.femp_cat_mom_0.5_7+ f.mom_high_5_7*f.type_care.5_7",
+               data = "mom_edu57",
+               family = "gaussian",
+               datasources = c.data[c('eden')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.45
+
+#elfe
+
+mod1 <- ds.glm(formula = "n.int_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.mom_high_5_7+ f.sex.5_7+ f.femp_cat_mom_0.5_7",
+               data = "mom_edu57",
+               family = "gaussian",
+               datasources = c.data[c('elfe')])
+
+
+
+mod2 <- ds.glm(formula = "n.int_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.mom_high_5_7+ f.sex.5_7+ f.femp_cat_mom_0.5_7+ f.mom_high_5_7*f.type_care.5_7",
+               data = "mom_edu57",
+               family = "gaussian",
+               datasources = c.data[c('elfe')])
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.03
+
+
+
+
+#########################
+#########################  7 to 9 years
+
+
+
+mod1 <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.mom_high_7_10+ f.sex.7_10+ f.mom.emp.dich.7_10",
+               data = "mom_edu710",
+               family = "gaussian",
+               datasources = c.data[c('alspac')])
+
+
+mod2 <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.mom_high_7_10+ f.sex.7_10+ f.mom.emp.dich.7_10+ f.mom_high_7_10*f.type_care.7_10",
+               data = "mom_edu710",
+               family = "gaussian",
+               datasources = c.data[c('alspac')])
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.22
+
+
+
+
+
+
+
+
+#genr
+mod1 <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.mom_high_7_10+ f.sex.7_10+ f.femp_cat_mom_0.7_10",
+               data = "mom_edu710",
+               family = "gaussian",
+               datasources = c.data[c('generationR')])
+
+mod2 <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.mom_high_7_10+ f.sex.7_10+ f.femp_cat_mom_0.7_10+ f.mom_high_7_10*f.type_care.7_10",
+               data = "mom_edu710",
+               family = "gaussian",
+               datasources = c.data[c('generationR')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.32
+
+
+
+
+
+
+
+#dnbc
+mod1  <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+f.fam_splitup.0.7_10+f.mom_high_7_10+f.femp_cat_mom_0.7_10+n.birth_weight.7_10+f.only_child.7_10+n.agebirth_m_y.7_10",
+                data = "mom_edu710",
+                family = "gaussian",
+                datasources = c.data[c('dnbc')])
+
+mod2  <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+f.fam_splitup.0.7_10+f.mom_high_7_10+f.femp_cat_mom_0.7_10+n.birth_weight.7_10+f.only_child.7_10+n.agebirth_m_y.7_10+ f.mom_high_7_10*f.type_care.7_10",
+                data = "mom_edu710",
+                family = "gaussian",
+                datasources = c.data[c('dnbc')])
+
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.06
+
+
+
+
+
+
+# INMA
+
+mod1 <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+ f.only_child.7_10+ f.mom_high_7_10+ f.sex.7_10+ f.femp_cat_mom_0.7_10",
+               data = "mom_edu710",
+               family = "gaussian",
+               datasources = c.data[c('INMA')])
+
+mod2 <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+ f.only_child.7_10+ f.mom_high_7_10+ f.sex.7_10+ f.femp_cat_mom_0.7_10+ f.mom_high_7_10*f.type_care.7_10",
+               data = "mom_edu710",
+               family = "gaussian",
+               datasources = c.data[c('INMA')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.54
+
+# EDEN
+
+mod1 <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.mom_high_7_10+ f.sex.7_10+ f.femp_cat_mom_0.7_10",
+               data = "mom_edu710",
+               family = "gaussian",
+               datasources = c.data[c('eden')])
+mod2 <- ds.glm(formula = "n.int_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.mom_high_7_10+ f.sex.7_10+ f.femp_cat_mom_0.7_10+ f.mom_high_7_10*f.type_care.7_10",
+               data = "mom_edu710",
+               family = "gaussian",
+               datasources = c.data[c('eden')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#0.03
+
+
+
+################## 10 to 13 years
+
+mod1<- ds.glm(formula = "n.int_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.mom_high_10_14+ f.sex.10_14+ f.mom.emp.dich.10_14",
+              data = "mom_edu1014",
+              family = "gaussian",
+              datasources = c.data[c('alspac')])
+
+mod2<- ds.glm(formula = "n.int_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.mom_high_10_14+ f.sex.10_14+ f.mom.emp.dich.10_14+ f.mom_high_10_14*f.type_care.10_14",
+              data = "mom_edu1014",
+              family = "gaussian",
+              datasources = c.data[c('alspac')])
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#0.40
+
+
+
+
+#dnbc
+mod1 <- ds.glm(formula = "n.int_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.mom_high_10_14+ f.sex.10_14+ f.femp_cat_mom_0.10_14",
+               data = "mom_edu1014",
+               family = "gaussian",
+               datasources = c.data[c('dnbc')])
+
+mod2 <- ds.glm(formula = "n.int_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.mom_high_10_14+ f.sex.10_14+ f.femp_cat_mom_0.10_14+ f.mom_high_10_14*f.type_care.10_14",
+               data = "mom_edu1014",
+               family = "gaussian",
+               datasources = c.data[c('dnbc')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with interaction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#0.01
+
+
+# INMA not available here
+
+
+
+
+## externalizing behavior
+
+c.data <- DSI::datashield.login(logins = logindata, restore="ext_momedu")
+
+mod1 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.mom_high_5_7+ f.sex.5_7+ f.mom.emp.dich.5_7",
+               data = "mom_edu57",
+               family = "gaussian",
+               datasources = c.data[c('alspac')])
+
+# with exteraction
+
+mod2 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.mom_high_5_7+ f.sex.5_7+ f.mom.emp.dich.5_7+ f.mom_high_5_7*f.type_care.5_7",
+               data = "mom_edu57",
+               family = "gaussian",
+               datasources = c.data[c('alspac')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+# So p = 0.23
+
+
+
+
+#genr
+mod1 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.mom_high_5_7+ f.sex.5_7+ f.femp_cat_mom_0.5_7",
+               data = "mom_edu57",
+               family = "gaussian",
+               datasources = c.data[c('generationR')])
+
+
+mod2 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.mom_high_5_7+ f.sex.5_7+ f.femp_cat_mom_0.5_7+ f.mom_high_5_7*f.type_care.5_7",
+               data = "mom_edu57",
+               family = "gaussian",
+               datasources = c.data[c('generationR')])
+
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.44
+
+
+#eden
+mod1 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.mom_high_5_7+ f.sex.5_7+ f.femp_cat_mom_0.5_7",
+               data = "mom_edu57",
+               family = "gaussian",
+               datasources = c.data[c('eden')])
+
+mod2 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.mom_high_5_7+ f.sex.5_7+ f.femp_cat_mom_0.5_7+ f.mom_high_5_7*f.type_care.5_7",
+               data = "mom_edu57",
+               family = "gaussian",
+               datasources = c.data[c('eden')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.04
+
+#elfe
+
+mod1 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.mom_high_5_7+ f.sex.5_7+ f.femp_cat_mom_0.5_7",
+               data = "mom_edu57",
+               family = "gaussian",
+               datasources = c.data[c('elfe')])
+
+
+
+mod2 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+ n.birth_weight.5_7+ n.agebirth_m_y.5_7+ f.fam_splitup.0.5_7+ f.only_child.5_7+ f.mom_high_5_7+ f.sex.5_7+ f.femp_cat_mom_0.5_7+ f.mom_high_5_7*f.type_care.5_7",
+               data = "mom_edu57",
+               family = "gaussian",
+               datasources = c.data[c('elfe')])
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.18
+
+
+
+
+#########################
+#########################  7 to 9 years
+
+
+mod1 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.mom_high_7_10+ f.sex.7_10+ f.mom.emp.dich.7_10",
+               data = "mom_edu710",
+               family = "gaussian",
+               datasources = c.data[c('alspac')])
+
+
+mod2 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.mom_high_7_10+ f.sex.7_10+ f.mom.emp.dich.7_10+ f.mom_high_7_10*f.type_care.7_10",
+               data = "mom_edu710",
+               family = "gaussian",
+               datasources = c.data[c('alspac')])
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.13
+
+
+
+#genr
+mod1 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.mom_high_7_10+ f.sex.7_10+ f.femp_cat_mom_0.7_10",
+               data = "mom_edu710",
+               family = "gaussian",
+               datasources = c.data[c('generationR')])
+
+mod2 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.mom_high_7_10+ f.sex.7_10+ f.femp_cat_mom_0.7_10+ f.mom_high_7_10*f.type_care.7_10",
+               data = "mom_edu710",
+               family = "gaussian",
+               datasources = c.data[c('generationR')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.28
+
+
+
+
+#dnbc
+mod1  <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+f.fam_splitup.0.7_10+f.mom_high_7_10+f.femp_cat_mom_0.7_10+n.birth_weight.7_10+f.only_child.7_10+n.agebirth_m_y.7_10",
+                data = "mom_edu710",
+                family = "gaussian",
+                datasources = c.data[c('dnbc')])
+
+mod2  <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+f.fam_splitup.0.7_10+f.mom_high_7_10+f.femp_cat_mom_0.7_10+n.birth_weight.7_10+f.only_child.7_10+n.agebirth_m_y.7_10+ f.mom_high_7_10*f.type_care.7_10",
+                data = "mom_edu710",
+                family = "gaussian",
+                datasources = c.data[c('dnbc')])
+
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.25
+
+
+
+
+# INMA
+
+mod1 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+ f.only_child.7_10+ f.mom_high_7_10+ f.sex.7_10+ f.femp_cat_mom_0.7_10",
+               data = "mom_edu710",
+               family = "gaussian",
+               datasources = c.data[c('INMA')])
+
+mod2 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+ f.only_child.7_10+ f.mom_high_7_10+ f.sex.7_10+ f.femp_cat_mom_0.7_10+ f.mom_high_7_10*f.type_care.7_10",
+               data = "mom_edu710",
+               family = "gaussian",
+               datasources = c.data[c('INMA')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#p=0.47
+
+# EDEN
+
+mod1 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.mom_high_7_10+ f.sex.7_10+ f.femp_cat_mom_0.7_10",
+               data = "mom_edu710",
+               family = "gaussian",
+               datasources = c.data[c('eden')])
+mod2 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+ n.birth_weight.7_10+ n.agebirth_m_y.7_10+f.fam_splitup.0.7_10+ f.only_child.7_10+ f.mom_high_7_10+ f.sex.7_10+ f.femp_cat_mom_0.7_10+ f.mom_high_7_10*f.type_care.7_10",
+               data = "mom_edu710",
+               family = "gaussian",
+               datasources = c.data[c('eden')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#0.11
+
+
+
+################## 10 to 13 years
+
+mod1<- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.mom_high_10_14+ f.sex.10_14+ f.mom.emp.dich.10_14",
+              data = "mom_edu1014",
+              family = "gaussian",
+              datasources = c.data[c('alspac')])
+
+mod2<- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.mom_high_10_14+ f.sex.10_14+ f.mom.emp.dich.10_14+ f.mom_high_10_14*f.type_care.10_14",
+              data = "mom_edu1014",
+              family = "gaussian",
+              datasources = c.data[c('alspac')])
+
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#0.09
+
+
+
+
+#dnbc
+mod1 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.mom_high_10_14+ f.sex.10_14+ f.femp_cat_mom_0.10_14",
+               data = "mom_edu1014",
+               family = "gaussian",
+               datasources = c.data[c('dnbc')])
+
+mod2 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+ n.birth_weight.10_14+ n.agebirth_m_y.10_14+ f.fam_splitup.0.10_14+f.only_child.10_14+ f.mom_high_10_14+ f.sex.10_14+ f.femp_cat_mom_0.10_14+ f.mom_high_10_14*f.type_care.10_14",
+               data = "mom_edu1014",
+               family = "gaussian",
+               datasources = c.data[c('dnbc')])
+
+
+# deviance
+(deviance1 <- mod1$dev)
+
+
+# deviance in model with exteraction
+(deviance2 <- mod2$dev)
+
+# difference in deviance
+(dev.diff <- deviance1 -  deviance2)
+
+# this difference now needs to be "scaled". Scale parameter is given by:
+(scale <- deviance2/mod2$df)
+
+# Change in "scaled" deviance may now be estimated as 
+(scaled.dev <- dev.diff/scale)
+
+# This can be treated as a chi squared on 1 degree of freedom
+
+(p <- 1-pchisq(scaled.dev,1))
+
+#0.89
+
+
+
+
+
+
+
