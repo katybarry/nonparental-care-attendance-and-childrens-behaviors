@@ -1,4 +1,4 @@
-# non-parental childcare attendance and childrens symptoms
+# non-parental childcare attendance and childrens internalising and externalising symptoms
 
 Early childcare arrangements prior to school entry and children’s internalising and externalising symptoms: an individual participant data meta-analysis of six European child cohort studies (EU Child Cohort Network)
 
