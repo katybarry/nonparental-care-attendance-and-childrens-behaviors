@@ -1,4 +1,5 @@
-# nonmaternal care attendance and childrens behaviors
-Associations between early nonmaternal care attendance and internalizing and externalizing behaviors through adolescence: An individual participant data meta-analysis of six European cohorts from the Lifecycle Project
+# non-parental childcare attendance and childrens symptoms
 
-This repository contains all of the code used for the data management, main analysis, and sensitivity analyses that took place for this project. All code was performed on Datashield 6.1 using R studio.
+Early childcare arrangements prior to school entry and children’s internalising and externalising symptoms: an individual participant data meta-analysis of six European child cohort studies (EU Child Cohort Network)
+
+This repository contains all of the code used for the data management, main analysis, and sensitivity analyses that took place for this project. All code was performed on Datashield 6.3 using R studio.
