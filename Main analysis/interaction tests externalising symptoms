@@ -1,0 +1,2525 @@
+#test for interactions
+
+# pooled data after multiple imputation main analysis
+
+####################################################################################################
+# Testing for interactions: mother's post-partum depression within the first year
+####################################################################################################
+
+
+ds.colnames('ext_data_1')
+
+
+####################################################################################################
+# alspac 5 to 6 YEARS
+####################################################################################################
+
+
+#ppd interaction model ---------------------------------------------------------------------------------------
+imputed_glm_alspacext56 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_alspacext56 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7 +f.ppd.5_7 +f.type_care.5_7*f.ppd.5_7",
+                                   data = dataset_name,  
+                                   family = "gaussian",  
+                                   datasources = c.data[c('alspac')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_alspacext56[[i]] <- glm_result_alspacext56
+}
+
+
+imputed_glm_alspacext56
+# pool the 10 imputed datasets
+u_pooled_alspac56  <- dh.pool(
+  imputed_glm = imputed_glm_alspacext56,
+  type = "glm_ipd",  
+  coh_names = "alspac",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_alspac56)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_alspacext56[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "alspac", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# genr 5 to 6 YEARS
+####################################################################################################
+
+
+#ppd interaction model ---------------------------------------------------------------------------------------
+imputed_glm_genrext56 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_genrext56 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+f.ppd.5_7 +f.type_care.5_7*f.ppd.5_7",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('genr')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_genrext56[[i]] <- glm_result_genrext56
+}
+
+
+imputed_glm_genrext56
+# pool the 10 imputed datasets
+u_pooled_genr56 <- dh.pool(
+  imputed_glm = imputed_glm_genrext56,
+  type = "glm_ipd",  
+  coh_names = "genr",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_genr56)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_genrext56[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "genr", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# EDEN 5 to 6 YEARS
+####################################################################################################
+
+
+#ppd interaction model ---------------------------------------------------------------------------------------
+imputed_glm_edenext56 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_edenext56 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+f.ppd.5_7 +f.type_care.5_7*f.ppd.5_7",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('eden')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_edenext56[[i]] <- glm_result_edenext56
+}
+
+
+imputed_glm_edenext56
+# pool the 10 imputed datasets
+u_pooled_eden56 <- dh.pool(
+  imputed_glm = imputed_glm_edenext56,
+  type = "glm_ipd",  
+  coh_names = "eden",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_eden56)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_edenext56[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "eden", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# elfe 5 to 6 YEARS
+####################################################################################################
+
+
+#ppd interaction model ---------------------------------------------------------------------------------------
+imputed_glm_elfeext56 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_elfeext56 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+f.ppd.5_7 +f.type_care.5_7*f.ppd.5_7",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('elfe')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_elfeext56[[i]] <- glm_result_elfeext56
+}
+
+
+imputed_glm_elfeext56
+# pool the 10 imputed datasets
+u_pooled_elfe56 <- dh.pool(
+  imputed_glm = imputed_glm_elfeext56,
+  type = "glm_ipd",  
+  coh_names = "elfe",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_elfe56)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_elfeext56[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "elfe", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# meta-analysis 5 to 6 years ppd interaction model
+####################################################################################################
+
+# centre-based childcare-------------------------------
+yext5_6 <-c((u_pooled_alspac56$pooled_mean[3]),
+            (u_pooled_genr56$pooled_mean[3]),
+            (u_pooled_eden56$pooled_mean[3]),
+            (u_pooled_elfe56$pooled_mean[3]))
+
+yext5_6
+
+seext5_6 <-c((u_pooled_alspac56$pooled_se[3]),
+             (u_pooled_genr56$pooled_se[3]),
+             (u_pooled_eden56$pooled_se[3]),
+             (u_pooled_elfe56$pooled_se[3]))
+
+
+resext5_6 <- metafor::rma(yext5_6, sei=seext5_6)
+
+
+
+# pooled results
+resext5_6 #-2.5457 p=0.7644
+
+# Informal childcare-------------------------------
+
+yext5_6_other <-c((u_pooled_alspac56$pooled_mean[5]),
+                  (u_pooled_genr56$pooled_mean[5]),
+                  (u_pooled_eden56$pooled_mean[5]),
+                  (u_pooled_elfe56$pooled_mean[5]))
+
+yext5_6_other
+
+seext5_6_other <-c((u_pooled_alspac56$pooled_se[5]),
+                   (u_pooled_genr56$pooled_se[5]),
+                   (u_pooled_eden56$pooled_se[5]),
+                   (u_pooled_elfe56$pooled_se[5]))
+
+
+resext5_6_other <- metafor::rma(yext5_6_other, sei=seext5_6_other)
+resext5_6_other #-0.8220 p=0.8848
+
+# pooled results
+resext5_6_other
+
+
+
+####################################################################################################
+# alspac 7 to 9 YEARS
+####################################################################################################
+
+
+#ppd interaction model ---------------------------------------------------------------------------------------
+imputed_glm_alspacext79 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_alspacext79 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+f.ppd.7_10+f.type_care.7_10*f.ppd.7_10",
+                                   data = dataset_name,  
+                                   family = "gaussian",  
+                                   datasources = c.data[c('alspac')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_alspacext79[[i]] <- glm_result_alspacext79
+}
+
+
+imputed_glm_alspacext79
+# pool the 10 imputed datasets
+u_pooled_alspac79  <- dh.pool(
+  imputed_glm = imputed_glm_alspacext79,
+  type = "glm_ipd",  
+  coh_names = "alspac",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_alspac79)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_alspacext79[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "alspac", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# genr 7 to 9 YEARS
+####################################################################################################
+
+
+#ppd interaction model ---------------------------------------------------------------------------------------
+imputed_glm_genrext79 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_genrext79 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+f.ppd.7_10+f.type_care.7_10*f.ppd.7_10",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('genr')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_genrext79[[i]] <- glm_result_genrext79
+}
+
+
+imputed_glm_genrext79
+# pool the 10 imputed datasets
+u_pooled_genr79 <- dh.pool(
+  imputed_glm = imputed_glm_genrext79,
+  type = "glm_ipd",  
+  coh_names = "genr",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_genr79)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_genrext79[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "genr", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# dnbc 7 to 9 YEARS
+####################################################################################################
+
+
+#ppd interaction model ---------------------------------------------------------------------------------------
+imputed_glm_dnbcext79 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_dnbcext79 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+f.ppd.7_10+f.type_care.7_10*f.ppd.7_10",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('dnbc')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_dnbcext79[[i]] <- glm_result_dnbcext79
+}
+
+
+imputed_glm_dnbcext79
+# pool the 10 imputed datasets
+u_pooled_dnbc79 <- dh.pool(
+  imputed_glm = imputed_glm_dnbcext79,
+  type = "glm_ipd",  
+  coh_names = "dnbc",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_dnbc79)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_dnbcext79[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "dnbc", 
+  direction = "wide",
+  ci_format = "separate")
+
+
+####################################################################################################
+# EDEN 7 to 9 YEARS
+####################################################################################################
+
+
+#ppd interaction model ---------------------------------------------------------------------------------------
+imputed_glm_edenext79 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_edenext79 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+f.ppd.7_10+f.type_care.7_10*f.ppd.7_10",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('eden')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_edenext79[[i]] <- glm_result_edenext79
+}
+
+
+imputed_glm_edenext79
+# pool the 10 imputed datasets
+u_pooled_eden79 <- dh.pool(
+  imputed_glm = imputed_glm_edenext79,
+  type = "glm_ipd",  
+  coh_names = "eden",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_eden79)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_edenext79[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "eden", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# INMA 7 to 9 YEARS
+####################################################################################################
+
+
+#ppd interaction model ---------------------------------------------------------------------------------------
+imputed_glm_INMAext79 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_INMAext79 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+f.ppd.7_10+f.type_care.7_10*f.ppd.7_10",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('INMA')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_INMAext79[[i]] <- glm_result_INMAext79
+}
+
+
+imputed_glm_INMAext79
+# pool the 10 imputed datasets
+u_pooled_INMA79 <- dh.pool(
+  imputed_glm = imputed_glm_INMAext79,
+  type = "glm_ipd",  
+  coh_names = "INMA",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_INMA79)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_INMAext79[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "INMA", 
+  direction = "wide",
+  ci_format = "separate")
+####################################################################################################
+# meta-analysis 7 to 9 years ppd interaction model
+####################################################################################################
+# centre-based childcare-------------------------------
+
+yext7_10 <-c((u_pooled_alspac79$pooled_mean[3]),
+             (u_pooled_genr79$pooled_mean[3]),
+             (u_pooled_dnbc79$pooled_mean[3]),
+             (u_pooled_eden79$pooled_mean[3]),
+             (u_pooled_INMA79$pooled_mean[3]))
+
+yext7_10
+
+seext7_10 <-c((u_pooled_alspac79$pooled_se[3]),
+              (u_pooled_genr79$pooled_se[3]),
+              (u_pooled_dnbc79$pooled_se[3]),
+              (u_pooled_eden79$pooled_se[3]),
+              (u_pooled_INMA79$pooled_se[3])
+)
+
+
+resext7_10 <- metafor::rma(yext7_10, sei=seext7_10)
+
+# pooled results
+resext7_10 #0.0997  p=0.9330
+
+# Informal childcare-------------------------------
+
+yext7_10_other <-c((u_pooled_alspac79$pooled_mean[5]),
+                   (u_pooled_genr79$pooled_mean[5]),
+                   (u_pooled_dnbc79$pooled_mean[5]),
+                   (u_pooled_eden79$pooled_mean[5]))
+
+yext7_10_other
+
+seext7_10_other <-c((u_pooled_alspac79$pooled_se[5]),
+                    (u_pooled_genr79$pooled_se[5]),
+                    (u_pooled_dnbc79$pooled_se[5]),
+                    (u_pooled_eden79$pooled_se[5])
+)
+
+
+resext7_10_other <- metafor::rma(yext7_10_other, sei=seext7_10_other)
+
+# pooled results
+resext7_10_other #0.0817 #p= 0.9264
+
+####################################################################################################
+# alspac 10 to 13 YEARS
+####################################################################################################
+
+
+#ppd interaction model ---------------------------------------------------------------------------------------
+imputed_glm_alspacext1013 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_alspacext1013 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+f.ppd.10_14+f.type_care.10_14*f.ppd.10_14",
+                                     data = dataset_name,  
+                                     family = "gaussian",  
+                                     datasources = c.data[c('alspac')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_alspacext1013[[i]] <- glm_result_alspacext1013
+}
+
+
+imputed_glm_alspacext1013
+# pool the 10 imputed datasets
+u_pooled_alspac1013  <- dh.pool(
+  imputed_glm = imputed_glm_alspacext1013,
+  type = "glm_ipd",  
+  coh_names = "alspac",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_alspac1013)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_alspacext1013[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "alspac", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# genr 10 to 13 YEARS
+####################################################################################################
+
+
+#ppd interaction model ---------------------------------------------------------------------------------------
+imputed_glm_genrext1013 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_genrext1013 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+f.ppd.10_14+f.type_care.10_14*f.ppd.10_14",
+                                   data = dataset_name,  
+                                   family = "gaussian",  
+                                   datasources = c.data[c('genr')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_genrext1013[[i]] <- glm_result_genrext1013
+}
+
+ds.table('ext_data_1$f.ppd.10_14', datasources = c.data[c('genr')]) 
+
+
+imputed_glm_genrext1013
+# pool the 10 imputed datasets
+u_pooled_genr1013 <- dh.pool(
+  imputed_glm = imputed_glm_genrext1013,
+  type = "glm_ipd",  
+  coh_names = "genr",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_genr1013)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_genrext1013[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "genr", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# dnbc 10 to 13 YEARS
+####################################################################################################
+
+
+#ppd interaction model ---------------------------------------------------------------------------------------
+imputed_glm_dnbcext1013 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_dnbcext1013 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+f.ppd.10_14+f.type_care.10_14*f.ppd.10_14",
+                                   data = dataset_name,  
+                                   family = "gaussian",  
+                                   datasources = c.data[c('dnbc')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_dnbcext1013[[i]] <- glm_result_dnbcext1013
+}
+
+
+imputed_glm_dnbcext1013
+# pool the 10 imputed datasets
+u_pooled_dnbc1013 <- dh.pool(
+  imputed_glm = imputed_glm_dnbcext1013,
+  type = "glm_ipd",  
+  coh_names = "dnbc",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_dnbc1013)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_dnbcext1013[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "dnbc", 
+  direction = "wide",
+  ci_format = "separate")
+
+
+####################################################################################################
+# INMA 10 to 13 YEARS
+####################################################################################################
+
+
+#ppd interaction model ---------------------------------------------------------------------------------------
+imputed_glm_INMAext1013 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_INMAext1013 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+f.ppd.10_14+f.type_care.10_14*f.ppd.10_14",
+                                   data = dataset_name,  
+                                   family = "gaussian",  
+                                   datasources = c.data[c('INMA')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_INMAext1013[[i]] <- glm_result_INMAext1013
+}
+
+
+imputed_glm_INMAext1013
+# pool the 10 imputed datasets
+u_pooled_INMA1013 <- dh.pool(
+  imputed_glm = imputed_glm_INMAext1013,
+  type = "glm_ipd",  
+  coh_names = "INMA",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_INMA1013)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_INMAext1013[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "INMA", 
+  direction = "wide",
+  ci_format = "separate")
+
+
+####################################################################################################
+# meta-analysis 10 to 13 years ppd interaction model
+####################################################################################################
+
+# centre-based childcare-------------------------------
+
+yext10_14 <-c((u_pooled_alspac1013$pooled_mean[3]),
+              (u_pooled_genr1013$pooled_mean[3]),
+              (u_pooled_dnbc1013$pooled_mean[3]),
+              (u_pooled_INMA1013$pooled_mean[3]))
+
+yext10_14
+
+seext10_14 <-c((u_pooled_alspac1013$pooled_se[3]),
+               (u_pooled_genr1013$pooled_se[3]),
+               (u_pooled_dnbc1013$pooled_se[3]),
+               (u_pooled_INMA1013$pooled_se[3])
+)
+
+
+resext10_14 <- metafor::rma(yext10_14, sei=seext10_14)
+
+# pooled results
+resext10_14 #-0.7589 # p= 0.6068
+
+# Informal childcare-------------------------------
+
+yext10_14_other <-c((u_pooled_alspac1013$pooled_mean[5]),
+                    (u_pooled_genr1013$pooled_mean[5]),
+                    (u_pooled_dnbc1013$pooled_mean[5]))
+
+yext10_14_other
+
+seext10_14_other <-c((u_pooled_alspac1013$pooled_se[5]),
+                     (u_pooled_genr1013$pooled_se[5]),
+                     (u_pooled_dnbc1013$pooled_se[5])
+)
+
+
+resext10_14_other <- metafor::rma(yext10_14_other, sei=seext10_14_other)
+
+# pooled results
+resext10_14_other # -0.3957 p=0.7469
+
+
+####################################################################################################
+# dichotomize mother's education status exto low vs medium/high education and then test as an interaction
+####################################################################################################
+# loop through and make the new variable for each imputed dataset
+# Loop for 5 to 6 years-----------------------------------------
+for (i in 1:10) {
+  # Construct the dataset name dynamically
+  dataset_name <- paste0("ext_data_", i)
+  
+  # Convert to numeric
+  numeric_obj_name <- paste0("mom_edu_57_", i)
+  ds.asNumeric(paste0(dataset_name, "$f.edu_m_.0.5_7"), newobj=numeric_obj_name, datasources=c.data[c('eden','elfe','genr', 'alspac')])
+  
+  # Recode values
+  ds.recodeValues(var.name=numeric_obj_name, values2replace.vector=c(1,2,3), new.values.vector=c(1,0,0), newobj="mom_lowedu_5_7", datasources=c.data[c('eden','elfe','genr', 'alspac')])
+  
+  # Merge the new variable back exto the original dataset and overwrite it
+  ds.dataFrame(x=c(dataset_name, "mom_lowedu_5_7"), newobj=dataset_name, datasources=c.data[c('eden','elfe','genr','alspac')])
+}
+
+
+# Loop for 7 to 9 years-----------------------------------------
+for (i in 1:10) {
+  # Construct the dataset name dynamically
+  dataset_name <- paste0("ext_data_", i)
+  
+  # Convert to numeric
+  numeric_obj_name <- paste0("mom_edu_57_", i)
+  ds.asNumeric(paste0(dataset_name, "$f.edu_m_.0.7_10"), newobj=numeric_obj_name, datasources=c.data[c('dnbc','eden','genr','alspac','INMA')])
+  
+  # Recode values
+  ds.recodeValues(var.name=numeric_obj_name, values2replace.vector=c(1,2,3), new.values.vector=c(1,0,0), newobj="mom_lowedu_7_10", datasources=c.data[c('dnbc','eden','genr','alspac','INMA')])
+  
+  # Merge the new variable back exto the original dataset and overwrite it
+  ds.dataFrame(x=c(dataset_name, "mom_lowedu_7_10"), newobj=dataset_name, datasources=c.data[c('dnbc', 'eden','genr','alspac','INMA')])
+}
+
+#Loop for 10 to 13 years-----------------------------------------
+
+
+for (i in 1:10) {
+  # Construct the dataset name dynamically
+  dataset_name <- paste0("ext_data_", i)
+  
+  # Convert to numeric
+  numeric_obj_name <- paste0("mom_edu_1014_", i)
+  ds.asNumeric(paste0(dataset_name, "$f.edu_m_.0.10_14"), newobj=numeric_obj_name, datasources=c.data[c('dnbc','genr','alspac','INMA')])
+  
+  # Recode values
+  
+  ds.recodeValues(var.name=numeric_obj_name, values2replace.vector=c(1,2,3), new.values.vector=c(1,0,0), newobj="mom_lowedu_10_14", datasources=c.data[c('dnbc','genr','alspac','INMA')])
+  
+  # Merge the new variable back exto the original dataset and overwrite it
+  ds.dataFrame(x=c(dataset_name, "mom_lowedu_10_14"), newobj=dataset_name, datasources=c.data[c('dnbc','genr','alspac','INMA')])
+}
+
+# check dichotomous variable is stored exto dataset
+ds.colnames('ext_data_1')
+ds.colnames('ext_data_7')
+####################################################################################################
+# meta-analysis 5 to 6 years mothers education interaction test
+####################################################################################################
+
+
+
+
+
+####################################################################################################
+# alspac 5 to 6 YEARS
+####################################################################################################
+
+
+#education interaction model ---------------------------------------------------------------------------------------
+imputed_glm_alspacext56 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_alspacext56 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7 +mom_lowedu_5_7 +f.type_care.5_7*mom_lowedu_5_7",
+                                   data = dataset_name,  
+                                   family = "gaussian",  
+                                   datasources = c.data[c('alspac')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_alspacext56[[i]] <- glm_result_alspacext56
+}
+
+
+imputed_glm_alspacext56
+# pool the 10 imputed datasets
+u_pooled_alspac56  <- dh.pool(
+  imputed_glm = imputed_glm_alspacext56,
+  type = "glm_ipd",  
+  coh_names = "alspac",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_alspac56)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_alspacext56[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "alspac", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# genr 5 to 6 YEARS
+####################################################################################################
+
+
+#education interaction model ---------------------------------------------------------------------------------------
+imputed_glm_genrext56 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_genrext56 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+mom_lowedu_5_7 +f.type_care.5_7*mom_lowedu_5_7",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('genr')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_genrext56[[i]] <- glm_result_genrext56
+}
+
+
+imputed_glm_genrext56
+# pool the 10 imputed datasets
+u_pooled_genr56 <- dh.pool(
+  imputed_glm = imputed_glm_genrext56,
+  type = "glm_ipd",  
+  coh_names = "genr",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_genr56)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_genrext56[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "genr", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# EDEN 5 to 6 YEARS
+####################################################################################################
+
+
+#education interaction model ---------------------------------------------------------------------------------------
+imputed_glm_edenext56 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_edenext56 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+mom_lowedu_5_7 +f.type_care.5_7*mom_lowedu_5_7",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('eden')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_edenext56[[i]] <- glm_result_edenext56
+}
+
+
+imputed_glm_edenext56
+# pool the 10 imputed datasets
+u_pooled_eden56 <- dh.pool(
+  imputed_glm = imputed_glm_edenext56,
+  type = "glm_ipd",  
+  coh_names = "eden",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_eden56)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_edenext56[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "eden", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# elfe 5 to 6 YEARS
+####################################################################################################
+
+
+#education interaction model ---------------------------------------------------------------------------------------
+imputed_glm_elfeext56 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_elfeext56 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+mom_lowedu_5_7 +f.type_care.5_7*mom_lowedu_5_7",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('elfe')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_elfeext56[[i]] <- glm_result_elfeext56
+}
+
+
+imputed_glm_elfeext56
+# pool the 10 imputed datasets
+u_pooled_elfe56 <- dh.pool(
+  imputed_glm = imputed_glm_elfeext56,
+  type = "glm_ipd",  
+  coh_names = "elfe",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_elfe56)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_elfeext56[[3]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "elfe", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# meta-analysis 5 to 6 years ppd interaction model
+####################################################################################################
+
+# centre-based childcare-------------------------------
+yext5_6 <-c((u_pooled_alspac56$pooled_mean[3]),
+            (u_pooled_genr56$pooled_mean[3]),
+            (u_pooled_eden56$pooled_mean[3]),
+            (u_pooled_elfe56$pooled_mean[3]))
+
+yext5_6
+
+seext5_6 <-c((u_pooled_alspac56$pooled_se[3]),
+             (u_pooled_genr56$pooled_se[3]),
+             (u_pooled_eden56$pooled_se[3]),
+             (u_pooled_elfe56$pooled_se[3]))
+
+
+resext5_6 <- metafor::rma(yext5_6, sei=seext5_6)
+
+# pooled results
+
+resext5_6 #2.6828  p= 0.0320
+
+
+
+
+
+
+
+
+
+
+
+# Informal childcare-------------------------------
+
+yext5_6_other <-c((u_pooled_alspac56$pooled_mean[5]),
+                  (u_pooled_genr56$pooled_mean[5]),
+                  (u_pooled_eden56$pooled_mean[5]),
+                  (u_pooled_elfe56$pooled_mean[5]))
+
+yext5_6_other
+
+seext5_6_other <-c((u_pooled_alspac56$pooled_se[5]),
+                   (u_pooled_genr56$pooled_se[5]),
+                   (u_pooled_eden56$pooled_se[5]),
+                   (u_pooled_elfe56$pooled_se[5]))
+
+
+resext5_6_other <- metafor::rma(yext5_6_other, sei=seext5_6_other)
+
+
+# pooled results
+resext5_6_other #49.7289 p=<.0001 
+
+
+
+####################################################################################################
+# alspac 7 to 9 YEARS
+####################################################################################################
+
+
+#education interaction model ---------------------------------------------------------------------------------------
+imputed_glm_alspacext79 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_alspacext79 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+mom_lowedu_7_10+f.type_care.7_10*mom_lowedu_7_10",
+                                   data = dataset_name,  
+                                   family = "gaussian",  
+                                   datasources = c.data[c('alspac')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_alspacext79[[i]] <- glm_result_alspacext79
+}
+
+
+imputed_glm_alspacext79
+# pool the 10 imputed datasets
+u_pooled_alspac79  <- dh.pool(
+  imputed_glm = imputed_glm_alspacext79,
+  type = "glm_ipd",  
+  coh_names = "alspac",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_alspac79)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_alspacext79[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "alspac", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# genr 7 to 9 YEARS
+####################################################################################################
+
+
+#education interaction model ---------------------------------------------------------------------------------------
+imputed_glm_genrext79 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_genrext79 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+mom_lowedu_7_10+f.type_care.7_10*mom_lowedu_7_10",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('genr')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_genrext79[[i]] <- glm_result_genrext79
+}
+
+
+imputed_glm_genrext79
+# pool the 10 imputed datasets
+u_pooled_genr79 <- dh.pool(
+  imputed_glm = imputed_glm_genrext79,
+  type = "glm_ipd",  
+  coh_names = "genr",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_genr79)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_genrext79[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "genr", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# dnbc 7 to 9 YEARS
+####################################################################################################
+
+
+#education interaction model ---------------------------------------------------------------------------------------
+imputed_glm_dnbcext79 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_dnbcext79 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+mom_lowedu_7_10+f.type_care.7_10*mom_lowedu_7_10",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('dnbc')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_dnbcext79[[i]] <- glm_result_dnbcext79
+}
+
+
+imputed_glm_dnbcext79
+# pool the 10 imputed datasets
+u_pooled_dnbc79 <- dh.pool(
+  imputed_glm = imputed_glm_dnbcext79,
+  type = "glm_ipd",  
+  coh_names = "dnbc",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_dnbc79)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_dnbcext79[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "dnbc", 
+  direction = "wide",
+  ci_format = "separate")
+
+
+####################################################################################################
+# EDEN 7 to 9 YEARS
+####################################################################################################
+
+
+#education interaction model ---------------------------------------------------------------------------------------
+imputed_glm_edenext79 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_edenext79 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+mom_lowedu_7_10+f.type_care.7_10*mom_lowedu_7_10",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('eden')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_edenext79[[i]] <- glm_result_edenext79
+}
+
+
+imputed_glm_edenext79
+# pool the 10 imputed datasets
+u_pooled_eden79 <- dh.pool(
+  imputed_glm = imputed_glm_edenext79,
+  type = "glm_ipd",  
+  coh_names = "eden",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_eden79)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_edenext79[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "eden", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# INMA 7 to 9 YEARS
+####################################################################################################
+
+
+#education interaction model ---------------------------------------------------------------------------------------
+imputed_glm_INMAext79 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_INMAext79 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+mom_lowedu_7_10+f.type_care.7_10*mom_lowedu_7_10",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('INMA')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_INMAext79[[i]] <- glm_result_INMAext79
+}
+
+
+imputed_glm_INMAext79
+# pool the 10 imputed datasets
+u_pooled_INMA79 <- dh.pool(
+  imputed_glm = imputed_glm_INMAext79,
+  type = "glm_ipd",  
+  coh_names = "INMA",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_INMA79)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_INMAext79[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "INMA", 
+  direction = "wide",
+  ci_format = "separate")
+####################################################################################################
+# meta-analysis 7 to 9 years education interaction model
+####################################################################################################
+# centre-based childcare-------------------------------
+
+yext7_10 <-c((u_pooled_alspac79$pooled_mean[3]),
+             (u_pooled_genr79$pooled_mean[3]),
+             (u_pooled_dnbc79$pooled_mean[3]),
+             (u_pooled_eden79$pooled_mean[3]),
+             (u_pooled_INMA79$pooled_mean[3]))
+
+yext7_10
+
+seext7_10 <-c((u_pooled_alspac79$pooled_se[3]),
+              (u_pooled_genr79$pooled_se[3]),
+              (u_pooled_dnbc79$pooled_se[3]),
+              (u_pooled_eden79$pooled_se[3]),
+              (u_pooled_INMA79$pooled_se[3])
+)
+
+
+resext7_10 <- metafor::rma(yext7_10, sei=seext7_10)
+
+# pooled results
+resext7_10 #12.8367, p=0.1929
+
+# Informal childcare-------------------------------
+
+yext7_10_other <-c((u_pooled_alspac79$pooled_mean[5]),
+                   (u_pooled_genr79$pooled_mean[5]),
+                   (u_pooled_dnbc79$pooled_mean[5]),
+                   (u_pooled_eden79$pooled_mean[5]),
+                   (u_pooled_INMA79$pooled_mean[5]))
+
+yext7_10_other
+
+seext7_10_other <-c((u_pooled_alspac79$pooled_se[5]),
+                    (u_pooled_genr79$pooled_se[5]),
+                    (u_pooled_dnbc79$pooled_se[5]),
+                    (u_pooled_eden79$pooled_se[5]),
+                    (u_pooled_INMA79$pooled_se[5])
+)
+
+
+resext7_10_other <- metafor::rma(yext7_10_other, sei=seext7_10_other)
+
+# pooled results
+resext7_10_other # 47.3440 p=<.0001
+
+####################################################################################################
+# alspac 10 to 13 YEARS
+####################################################################################################
+
+
+#education interaction model ---------------------------------------------------------------------------------------
+imputed_glm_alspacext1013 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_alspacext1013 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+mom_lowedu_10_14+f.type_care.10_14*mom_lowedu_10_14",
+                                     data = dataset_name,  
+                                     family = "gaussian",  
+                                     datasources = c.data[c('alspac')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_alspacext1013[[i]] <- glm_result_alspacext1013
+}
+
+
+imputed_glm_alspacext1013
+# pool the 10 imputed datasets
+u_pooled_alspac1013  <- dh.pool(
+  imputed_glm = imputed_glm_alspacext1013,
+  type = "glm_ipd",  
+  coh_names = "alspac",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_alspac1013)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_alspacext1013[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "alspac", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# genr 10 to 13 YEARS
+####################################################################################################
+
+
+#education interaction model ---------------------------------------------------------------------------------------
+imputed_glm_genrext1013 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_genrext1013 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+mom_lowedu_10_14+f.type_care.10_14*mom_lowedu_10_14",
+                                   data = dataset_name,  
+                                   family = "gaussian",  
+                                   datasources = c.data[c('genr')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_genrext1013[[i]] <- glm_result_genrext1013
+}
+
+
+imputed_glm_genrext1013
+# pool the 10 imputed datasets
+u_pooled_genr1013 <- dh.pool(
+  imputed_glm = imputed_glm_genrext1013,
+  type = "glm_ipd",  
+  coh_names = "genr",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_genr1013)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_genrext1013[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "genr", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# dnbc 10 to 13 YEARS
+####################################################################################################
+
+
+#education interaction model ---------------------------------------------------------------------------------------
+imputed_glm_dnbcext1013 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_dnbcext1013 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+mom_lowedu_10_14+f.type_care.10_14*mom_lowedu_10_14",
+                                   data = dataset_name,  
+                                   family = "gaussian",  
+                                   datasources = c.data[c('dnbc')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_dnbcext1013[[i]] <- glm_result_dnbcext1013
+}
+
+
+imputed_glm_dnbcext1013
+# pool the 10 imputed datasets
+u_pooled_dnbc1013 <- dh.pool(
+  imputed_glm = imputed_glm_dnbcext1013,
+  type = "glm_ipd",  
+  coh_names = "dnbc",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_dnbc1013)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_dnbcext1013[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "dnbc", 
+  direction = "wide",
+  ci_format = "separate")
+
+
+####################################################################################################
+# INMA 10 to 13 YEARS
+####################################################################################################
+
+
+#education interaction model ---------------------------------------------------------------------------------------
+imputed_glm_INMAext1013 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_INMAext1013 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+mom_lowedu_10_14+f.type_care.10_14*mom_lowedu_10_14",
+                                   data = dataset_name,  
+                                   family = "gaussian",  
+                                   datasources = c.data[c('INMA')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_INMAext1013[[i]] <- glm_result_INMAext1013
+}
+
+
+imputed_glm_INMAext1013
+# pool the 10 imputed datasets
+u_pooled_INMA1013 <- dh.pool(
+  imputed_glm = imputed_glm_INMAext1013,
+  type = "glm_ipd",  
+  coh_names = "INMA",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_INMA1013)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_INMAext1013[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "INMA", 
+  direction = "wide",
+  ci_format = "separate")
+
+
+####################################################################################################
+# meta-analysis 10 to 13 years education interaction model
+####################################################################################################
+
+# centre-based childcare-------------------------------
+
+yext10_14 <-c((u_pooled_alspac1013$pooled_mean[3]),
+              (u_pooled_genr1013$pooled_mean[3]),
+              (u_pooled_dnbc1013$pooled_mean[3]),
+              (u_pooled_INMA1013$pooled_mean[3]))
+
+yext10_14
+
+seext10_14 <-c((u_pooled_alspac1013$pooled_se[3]),
+               (u_pooled_genr1013$pooled_se[3]),
+               (u_pooled_dnbc1013$pooled_se[3]),
+               (u_pooled_INMA1013$pooled_se[3])
+)
+
+
+resext10_14 <- metafor::rma(yext10_14, sei=seext10_14)
+
+# pooled results
+resext10_14 #2.2224 0.0078
+
+# Informal childcare-------------------------------
+
+yext10_14_other <-c((u_pooled_alspac1013$pooled_mean[5]),
+                    (u_pooled_genr1013$pooled_mean[5]),
+                    (u_pooled_dnbc1013$pooled_mean[5]),
+                    (u_pooled_INMA1013$pooled_mean[5]))
+
+yext10_14_other
+
+seext10_14_other <-c((u_pooled_alspac1013$pooled_se[5]),
+                     (u_pooled_genr1013$pooled_se[5]),
+                     (u_pooled_dnbc1013$pooled_se[5]),
+                     (u_pooled_INMA1013$pooled_se[5])
+)
+
+
+resext10_14_other <- metafor::rma(yext10_14_other, sei=seext10_14_other)
+
+# pooled results
+resext10_14_other #46.6245 <.0001
+
+
+####################################################################################################
+# Testing for interactions: sex
+####################################################################################################
+
+
+ds.colnames('ext_data_1')
+
+
+####################################################################################################
+# alspac 5 to 6 YEARS
+####################################################################################################
+
+
+#sex interaction model ---------------------------------------------------------------------------------------
+imputed_glm_alspacext56 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_alspacext56 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7 +f.sex.5_7 +f.type_care.5_7*f.sex.5_7",
+                                   data = dataset_name,  
+                                   family = "gaussian",  
+                                   datasources = c.data[c('alspac')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_alspacext56[[i]] <- glm_result_alspacext56
+}
+
+
+imputed_glm_alspacext56
+# pool the 10 imputed datasets
+u_pooled_alspac56  <- dh.pool(
+  imputed_glm = imputed_glm_alspacext56,
+  type = "glm_ipd",  
+  coh_names = "alspac",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_alspac56)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_alspacext56[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "alspac", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# genr 5 to 6 YEARS
+####################################################################################################
+
+
+#sex interaction model ---------------------------------------------------------------------------------------
+imputed_glm_genrext56 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_genrext56 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+f.sex.5_7 +f.type_care.5_7*f.sex.5_7",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('genr')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_genrext56[[i]] <- glm_result_genrext56
+}
+
+
+imputed_glm_genrext56
+# pool the 10 imputed datasets
+u_pooled_genr56 <- dh.pool(
+  imputed_glm = imputed_glm_genrext56,
+  type = "glm_ipd",  
+  coh_names = "genr",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_genr56)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_genrext56[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "genr", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# EDEN 5 to 6 YEARS
+####################################################################################################
+
+
+#sex interaction model ---------------------------------------------------------------------------------------
+imputed_glm_edenext56 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_edenext56 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+f.sex.5_7 +f.type_care.5_7*f.sex.5_7",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('eden')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_edenext56[[i]] <- glm_result_edenext56
+}
+
+
+imputed_glm_edenext56
+# pool the 10 imputed datasets
+u_pooled_eden56 <- dh.pool(
+  imputed_glm = imputed_glm_edenext56,
+  type = "glm_ipd",  
+  coh_names = "eden",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_eden56)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_edenext56[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "eden", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# elfe 5 to 6 YEARS
+####################################################################################################
+
+
+#sex interaction model ---------------------------------------------------------------------------------------
+imputed_glm_elfeext56 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_elfeext56 <- ds.glm(formula = "n.ext_pc_.5_7 ~ f.type_care.5_7+f.sex.5_7 +f.type_care.5_7*f.sex.5_7",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('elfe')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_elfeext56[[i]] <- glm_result_elfeext56
+}
+
+
+imputed_glm_elfeext56
+# pool the 10 imputed datasets
+u_pooled_elfe56 <- dh.pool(
+  imputed_glm = imputed_glm_elfeext56,
+  type = "glm_ipd",  
+  coh_names = "elfe",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_elfe56)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_elfeext56[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "elfe", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# meta-analysis 5 to 6 years sex interaction model
+####################################################################################################
+
+# centre-based childcare-------------------------------
+yext5_6 <-c((u_pooled_alspac56$pooled_mean[3]),
+            (u_pooled_genr56$pooled_mean[3]),
+            (u_pooled_eden56$pooled_mean[3]),
+            (u_pooled_elfe56$pooled_mean[3]))
+
+yext5_6
+
+seext5_6 <-c((u_pooled_alspac56$pooled_se[3]),
+             (u_pooled_genr56$pooled_se[3]),
+             (u_pooled_eden56$pooled_se[3]),
+             (u_pooled_elfe56$pooled_se[3]))
+
+
+resext5_6 <- metafor::rma(yext5_6, sei=seext5_6)
+
+
+# pooled results
+resext5_6 #-1.9483 0.4804
+
+# Informal childcare-------------------------------
+
+yext5_6_other <-c((u_pooled_alspac56$pooled_mean[5]),
+                  (u_pooled_genr56$pooled_mean[5]),
+                  (u_pooled_eden56$pooled_mean[5]),
+                  (u_pooled_elfe56$pooled_mean[5]))
+
+yext5_6_other
+
+seext5_6_other <-c((u_pooled_alspac56$pooled_se[5]),
+                   (u_pooled_genr56$pooled_se[5]),
+                   (u_pooled_eden56$pooled_se[5]),
+                   (u_pooled_elfe56$pooled_se[5]))
+
+
+resext5_6_other <- metafor::rma(yext5_6_other, sei=seext5_6_other)
+resext5_6_other
+
+# pooled results
+resext5_6_other #  1.2080   0.4668
+
+
+
+####################################################################################################
+# alspac 7 to 9 YEARS
+####################################################################################################
+
+
+#sex interaction model ---------------------------------------------------------------------------------------
+imputed_glm_alspacext79 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_alspacext79 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+f.sex.7_10+f.type_care.7_10*f.sex.7_10",
+                                   data = dataset_name,  
+                                   family = "gaussian",  
+                                   datasources = c.data[c('alspac')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_alspacext79[[i]] <- glm_result_alspacext79
+}
+
+
+imputed_glm_alspacext79
+# pool the 10 imputed datasets
+u_pooled_alspac79  <- dh.pool(
+  imputed_glm = imputed_glm_alspacext79,
+  type = "glm_ipd",  
+  coh_names = "alspac",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_alspac79)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_alspacext79[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "alspac", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# genr 7 to 9 YEARS
+####################################################################################################
+
+
+#sex interaction model ---------------------------------------------------------------------------------------
+imputed_glm_genrext79 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_genrext79 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+f.sex.7_10+f.type_care.7_10*f.sex.7_10",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('genr')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_genrext79[[i]] <- glm_result_genrext79
+}
+
+
+imputed_glm_genrext79
+# pool the 10 imputed datasets
+u_pooled_genr79 <- dh.pool(
+  imputed_glm = imputed_glm_genrext79,
+  type = "glm_ipd",  
+  coh_names = "genr",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_genr79)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_genrext79[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "genr", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# dnbc 7 to 9 YEARS
+####################################################################################################
+
+
+#sex interaction model ---------------------------------------------------------------------------------------
+imputed_glm_dnbcext79 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_dnbcext79 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+f.sex.7_10+f.type_care.7_10*f.sex.7_10",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('dnbc')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_dnbcext79[[i]] <- glm_result_dnbcext79
+}
+
+
+imputed_glm_dnbcext79
+# pool the 10 imputed datasets
+u_pooled_dnbc79 <- dh.pool(
+  imputed_glm = imputed_glm_dnbcext79,
+  type = "glm_ipd",  
+  coh_names = "dnbc",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_dnbc79)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_dnbcext79[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "dnbc", 
+  direction = "wide",
+  ci_format = "separate")
+
+
+####################################################################################################
+# EDEN 7 to 9 YEARS
+####################################################################################################
+
+
+#sex interaction model ---------------------------------------------------------------------------------------
+imputed_glm_edenext79 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_edenext79 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+f.sex.7_10+f.type_care.7_10*f.sex.7_10",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('eden')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_edenext79[[i]] <- glm_result_edenext79
+}
+
+
+imputed_glm_edenext79
+# pool the 10 imputed datasets
+u_pooled_eden79 <- dh.pool(
+  imputed_glm = imputed_glm_edenext79,
+  type = "glm_ipd",  
+  coh_names = "eden",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_eden79)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_edenext79[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "eden", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# INMA 7 to 9 YEARS
+####################################################################################################
+
+
+#sex interaction model ---------------------------------------------------------------------------------------
+imputed_glm_INMAext79 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_INMAext79 <- ds.glm(formula = "n.ext_pc_.7_10 ~ f.type_care.7_10+f.sex.7_10+f.type_care.7_10*f.sex.7_10",
+                                 data = dataset_name,  
+                                 family = "gaussian",  
+                                 datasources = c.data[c('INMA')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_INMAext79[[i]] <- glm_result_INMAext79
+}
+
+
+imputed_glm_INMAext79
+# pool the 10 imputed datasets
+u_pooled_INMA79 <- dh.pool(
+  imputed_glm = imputed_glm_INMAext79,
+  type = "glm_ipd",  
+  coh_names = "INMA",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_INMA79)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_INMAext79[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "INMA", 
+  direction = "wide",
+  ci_format = "separate")
+####################################################################################################
+# meta-analysis 7 to 9 years sex interaction model
+####################################################################################################
+# centre-based childcare-------------------------------
+
+yext7_10 <-c((u_pooled_alspac79$pooled_mean[3]),
+             (u_pooled_genr79$pooled_mean[3]),
+             (u_pooled_dnbc79$pooled_mean[3]),
+             (u_pooled_eden79$pooled_mean[3]),
+             (u_pooled_INMA79$pooled_mean[3]))
+
+yext7_10
+
+seext7_10 <-c((u_pooled_alspac79$pooled_se[3]),
+              (u_pooled_genr79$pooled_se[3]),
+              (u_pooled_dnbc79$pooled_se[3]),
+              (u_pooled_eden79$pooled_se[3]),
+              (u_pooled_INMA79$pooled_se[3])
+)
+
+
+resext7_10 <- metafor::rma(yext7_10, sei=seext7_10)
+
+# pooled results
+resext7_10 #-0.8144 0.1559
+
+# Informal childcare-------------------------------
+
+yext7_10_other <-c((u_pooled_alspac79$pooled_mean[5]),
+                   (u_pooled_genr79$pooled_mean[5]),
+                   (u_pooled_dnbc79$pooled_mean[5]),
+                   (u_pooled_eden79$pooled_mean[5]),
+                   (u_pooled_INMA79$pooled_mean[5]))
+
+yext7_10_other
+
+seext7_10_other <-c((u_pooled_alspac79$pooled_se[5]),
+                    (u_pooled_genr79$pooled_se[5]),
+                    (u_pooled_dnbc79$pooled_se[5]),
+                    (u_pooled_eden79$pooled_se[5]),
+                    (u_pooled_INMA79$pooled_se[5])
+)
+
+
+resext7_10_other <- metafor::rma(yext7_10_other, sei=seext7_10_other)
+
+# pooled results
+resext7_10_other # 0.4165 p=0.8356
+
+####################################################################################################
+# alspac 10 to 13 YEARS
+####################################################################################################
+
+
+#sex interaction model ---------------------------------------------------------------------------------------
+imputed_glm_alspacext1013 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_alspacext1013 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+f.sex.10_14+f.type_care.10_14*f.sex.10_14",
+                                     data = dataset_name,  
+                                     family = "gaussian",  
+                                     datasources = c.data[c('alspac')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_alspacext1013[[i]] <- glm_result_alspacext1013
+}
+
+
+imputed_glm_alspacext1013
+# pool the 10 imputed datasets
+u_pooled_alspac1013  <- dh.pool(
+  imputed_glm = imputed_glm_alspacext1013,
+  type = "glm_ipd",  
+  coh_names = "alspac",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_alspac1013)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_alspacext1013[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "alspac", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# genr 10 to 13 YEARS
+####################################################################################################
+
+
+#sex interaction model ---------------------------------------------------------------------------------------
+imputed_glm_genrext1013 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_genrext1013 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+f.sex.10_14+f.type_care.10_14*f.sex.10_14",
+                                   data = dataset_name,  
+                                   family = "gaussian",  
+                                   datasources = c.data[c('genr')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_genrext1013[[i]] <- glm_result_genrext1013
+}
+
+
+imputed_glm_genrext1013
+# pool the 10 imputed datasets
+u_pooled_genr1013 <- dh.pool(
+  imputed_glm = imputed_glm_genrext1013,
+  type = "glm_ipd",  
+  coh_names = "genr",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_genr1013)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_genrext1013[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "genr", 
+  direction = "wide",
+  ci_format = "separate")
+
+####################################################################################################
+# dnbc 10 to 13 YEARS
+####################################################################################################
+
+
+#sex interaction model ---------------------------------------------------------------------------------------
+imputed_glm_dnbcext1013 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_dnbcext1013 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+f.sex.10_14+f.type_care.10_14*f.sex.10_14",
+                                   data = dataset_name,  
+                                   family = "gaussian",  
+                                   datasources = c.data[c('dnbc')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_dnbcext1013[[i]] <- glm_result_dnbcext1013
+}
+
+
+imputed_glm_dnbcext1013
+# pool the 10 imputed datasets
+u_pooled_dnbc1013 <- dh.pool(
+  imputed_glm = imputed_glm_dnbcext1013,
+  type = "glm_ipd",  
+  coh_names = "dnbc",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_dnbc1013)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_dnbcext1013[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "dnbc", 
+  direction = "wide",
+  ci_format = "separate")
+
+
+####################################################################################################
+# INMA 10 to 13 YEARS
+####################################################################################################
+
+
+#sex interaction model ---------------------------------------------------------------------------------------
+imputed_glm_INMAext1013 <- list()
+
+# Define the number of imputed datasets
+n_imputed_datasets <- 10  
+
+# Loop over each imputed dataset and perform the GLM analysis
+for (i in 1:n_imputed_datasets) {
+  
+  # Construct the dataset name for the current iteration
+  dataset_name <- paste("ext_data", i, sep = "_")
+  
+  # Perform the GLM analysis
+  
+  glm_result_INMAext1013 <- ds.glm(formula = "n.ext_pc_.10_14 ~ f.type_care.10_14+f.sex.10_14+f.type_care.10_14*f.sex.10_14",
+                                   data = dataset_name,  
+                                   family = "gaussian",  
+                                   datasources = c.data[c('INMA')])  
+  
+  # Store the GLM result in the list
+  imputed_glm_INMAext1013[[i]] <- glm_result_INMAext1013
+}
+
+
+imputed_glm_INMAext1013
+# pool the 10 imputed datasets
+u_pooled_INMA1013 <- dh.pool(
+  imputed_glm = imputed_glm_INMAext1013,
+  type = "glm_ipd",  
+  coh_names = "INMA",   
+  family = "gaussian",  
+  exponentiate = FALSE 
+)
+
+# Examine the pooled results
+print(u_pooled_INMA1013)
+
+# checking for each imputed dataset
+dh.lmTab(
+  model = imputed_glm_INMAext1013[[2]],
+  type = "glm_ipd", 
+  family = "gaussian",
+  coh_names = "INMA", 
+  direction = "wide",
+  ci_format = "separate")
+
+
+####################################################################################################
+# meta-analysis 10 to 13 years sex interaction model
+####################################################################################################
+
+# centre-based childcare-------------------------------
+
+yext10_14 <-c((u_pooled_alspac1013$pooled_mean[3]),
+              (u_pooled_genr1013$pooled_mean[3]),
+              (u_pooled_dnbc1013$pooled_mean[3]),
+              (u_pooled_INMA1013$pooled_mean[3]))
+
+yext10_14
+
+seext10_14 <-c((u_pooled_alspac1013$pooled_se[3]),
+               (u_pooled_genr1013$pooled_se[3]),
+               (u_pooled_dnbc1013$pooled_se[3]),
+               (u_pooled_INMA1013$pooled_se[3])
+)
+
+
+resext10_14 <- metafor::rma(yext10_14, sei=seext10_14)
+
+# pooled results
+resext10_14 #-0.8871 p=0.2279
+
+# Informal childcare-------------------------------
+
+yext10_14_other <-c((u_pooled_alspac1013$pooled_mean[5]),
+                    (u_pooled_genr1013$pooled_mean[5]),
+                    (u_pooled_dnbc1013$pooled_mean[5]),
+                    (u_pooled_INMA1013$pooled_mean[5]))
+
+yext10_14_other
+
+seext10_14_other <-c((u_pooled_alspac1013$pooled_se[5]),
+                     (u_pooled_genr1013$pooled_se[5]),
+                     (u_pooled_dnbc1013$pooled_se[5]),
+                     (u_pooled_INMA1013$pooled_se[5])
+)
+
+
+resext10_14_other <- metafor::rma(yext10_14_other, sei=seext10_14_other)
+
+# pooled results
+resext10_14_other #-1.2103, p=0.0303
+
+
+
+
+
+
+
