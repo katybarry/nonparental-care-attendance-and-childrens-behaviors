@@ -1,0 +1,261 @@
+################################################################################
+## Project: ECEC attendance and internalizing and externalizing behaviors in adolescence
+## Script purpose: ALSPAC data management
+## Author: Katharine M Barry
+## Email: katharine.barry@iplesp.upmc.fr
+
+
+#### login
+
+datashield.tables(conns)
+
+############## assign tables #####################
+####### non repeated data ########################
+datashield.assign.table(
+  conns =   conns,
+  table = "lc13/2_1_core_1_3/non_rep" ,
+  symbol = "alspac_core_nonrep")
+####### repeated data ########################
+datashield.assign.table(
+  conns =   conns,
+  table = "lc13/2_1_core_1_3/yearly_rep"  ,
+  symbol = "alspac_core_repeat")
+####### outcome variables ########################
+datashield.assign.table(
+  conns =   conns,
+  table = "lc13/1_1_outcome_1_3/yearly_rep",
+  symbol = "alspac_outcome")
+
+######checking loaded tables:
+# columns in the non repeated core data
+ds.colnames("alspac_core_nonrep")
+
+
+# columns in the repeated core data
+ds.colnames("alspac_core_repeat")
+
+
+#columns in the outcome data
+ds.colnames("alspac_outcome")
+
+
+#check dimensions
+ds.dim("alspac_core_repeat")
+ds.dim("alspac_core_nonrep")
+ds.dim("alspac_outcome")
+
+
+
+##### put data into the wide format ###############
+
+ds.reShape(
+  data.name = "alspac_core_repeat",
+  timevar.name = "age_years",
+  idvar.name = "child_id",
+  v.names = c(  "childcarecentre_", "childcarerel_","edu_f1_","edu_m_" ,"occup_f1_",       
+                "occup_m_","famsize_child","childcareprof_","fam_splitup", "childcare_"),
+  direction = "wide",
+  newobj = "alspac_core_w",
+  datasources = conns
+)
+
+#verifying columns
+ds.colnames("alspac_core_w", datasources=conns)
+ds.dim("alspac_core_w", datasources=conns)
+
+##### reshape the outcome variable into wide format ####### 
+ds.merge(
+  x.name = "alspac_core_w",
+  y.name = "alspac_outcome",
+  by.x.names = "child_id",
+  by.y.names = "child_id",
+  newobj = "analysis",
+  datasources = conns)
+
+#merge outcome variables with the non-repeated variables
+ds.merge(
+  x.name = "analysis",
+  y.name = "alspac_core_nonrep",
+  by.x.names = "child_id",
+  by.y.names = "child_id",
+  newobj = "df_final",
+  datasources = conns
+)
+
+## ---- check the merged variables
+ds.colnames("df_final", datasources=conns)
+### who evaluated outcomes
+#ds.table('df_final$int_eval_', datasources=conns) # returns back number 2
+#ds.table('df_final$ext_eval_', datasources=conns) # returns back number 2
+
+###### childcare center variable will be coded into a dichotomise variable in which if a child
+###### was enrolled in child care at year 1 and/or year 2, they will be yes and if not, no ######
+#ds.table('df_final')
+#childcare center years 1,2
+ds.table('df_final$childcarecentre_.1')
+ds.table('df_final$childcarecentre_.2') # no one attended childcare in this year, only those reported no childcare attendance
+
+#recode as numeric in order to manipulate variable:
+ds.asNumeric('df_final$childcarecentre_.1', newobj='centre_1')
+ds.asNumeric('df_final$childcarecentre_.2', newobj='centre_2')
+
+
+#changing the NAs so that we do not lose individuals due to the merging of year 1 and year 2 variable:
+ds.replaceNA(x='centre_1', forNA =100, newobj="NAcentre_.1")
+ds.replaceNA(x='centre_2', forNA =100, newobj="NAcentre_.2")
+ds.make(toAssign='NAcentre_.1 + NAcentre_.2', newobj = 'childcentre')
+ds.table ('childcentre', datasources=conns) 
+ds.recodeValues(var.name='childcentre', values2replace.vector = c(100,101,200),
+                new.values.vector = c(0,1,NA), newobj='centre_care')
+#if they were in childcare at least once in year 0 and year 1
+ds.table('centre_care')
+#if they were in childcare at least once in year 1 and year 2
+ds.table('centre_care')
+
+ds.asNumeric('df_final$childcarerel_.1', newobj='rel_1')
+ds.asNumeric('df_final$childcarerel_.2', newobj='rel_2')
+
+#changing the NAs so that we do not lose individuals due to the merging of year 1 and year 2 variable:
+ds.replaceNA(x='rel_1', forNA =100, newobj="NArel_.1")
+ds.replaceNA(x='rel_2', forNA =100, newobj="NArel_.2")
+
+ds.table('NArel_.1')
+
+ds.make(toAssign='NArel_.1+ NArel_.2', newobj = 'relcare')
+ds.table ('relcare', datasources=conns) 
+
+
+ds.recodeValues(var.name='relcare', values2replace.vector = c(200,101,100),
+                new.values.vector = c(9999,1,0), newobj='rel_care')
+ds.table('rel_care')
+
+
+ds.asNumeric('df_final$childcareprof_.1', newobj='prof_1')
+ds.asNumeric('df_final$childcareprof_.2', newobj='prof_2')
+
+#changing the NAs so that we do not lose individuals due to the merging of year 1 and year 2 variable:
+
+ds.replaceNA(x='prof_1', forNA =100, newobj="NAprof_.1")
+ds.replaceNA(x='prof_2', forNA =100, newobj="NAprof_.2")
+
+ds.make(toAssign='NAprof_.1+ NAprof_.2', newobj = 'profcare')
+
+ds.table ('profcare', datasources=conns) 
+
+ds.recodeValues(var.name='profcare', values2replace.vector = c(200,101,100),
+                new.values.vector = c(9999,1,0), newobj='prof_care')
+
+ds.table('prof_care')
+
+
+ds.asNumeric('df_final$childcare_.1', newobj='other_1')
+ds.asNumeric('df_final$childcare_.2', newobj='other_2')
+
+#changing the NAs so that we do not lose individuals due to the merging of year 1 and year 2 variable:
+
+ds.replaceNA(x='other_1', forNA =100, newobj="NAother_.1")
+ds.replaceNA(x='other_2', forNA =100, newobj="NAother_.2")
+
+ds.make(toAssign='NAother_.1+ NAother_.2', newobj = 'othercare')
+ds.table ('othercare', datasources=conns) 
+ds.recodeValues(var.name='othercare', values2replace.vector = c(200,101,100),
+                new.values.vector = c(9999,1,0), newobj='other_care')
+
+ds.table("other_care")
+
+# ECEC care
+ds.recodeValues(var.name='centre_care', 
+                values2replace.vector = c(0,1),
+                new.values.vector = c(1000,2000), missing=9999, newobj='centre_care_T')
+ds.table('centre_care_T')
+
+ds.make(toAssign='centre_care_T+rel_care+prof_care+other_care', newobj = 'types_care')
+ds.table("types_care")
+
+
+
+ds.recodeValues(var.name='types_care', values2replace.vector = c(1000,1001,1002,1003),
+                new.values.vector = c(0,2,2,2), newobj='types_care1')
+ds.table("types_care1")
+
+ds.recodeValues(var.name='types_care1', values2replace.vector = c(2001,2002,2003),
+                new.values.vector = c(1,1,1), newobj='types_care2')
+
+ds.table('types_care2')
+
+ds.recodeValues(var.name='types_care2', values2replace.vector = c(29998,39996),
+                new.values.vector = c(1,NA), newobj='early_care')
+
+
+
+ds.table('early_care')
+# 0= no type of care 1= ECEC care 2= other care
+
+
+ds.dataFrame(x=c('centre_care','early_care','df_final'), newobj='df_2',datasources=conns)
+
+
+
+datashield.workspace_save(conns = conns, ws = "early_exposure")
+
+####### recoding of covariates: 
+
+###############################################################
+###############################################################
+#### recoding covariates sibling position and mother and father occupation ###
+ds.summary('df_2')
+# creating a variable which allows us to know if the ALSPAC child is an only child or not:
+#re code only child versus other
+ds.asNumeric("df_2$sibling_pos", newobj = "num_sib")
+ds.Boole(V1="num_sib", V2='1', Boolean.operator='==', numeric.output=TRUE, newobj="only_child")
+ds.table('only_child') 
+ds.table("df_2$sibling_pos")
+
+
+#re-grouping mother's occupation into employed, unemployed, and other (at year 1)
+ds.asNumeric("df_2$occup_m_.1", newobj='occ_num_m_1')
+ds.table('occ_num_m_1')
+ds.recodeValues(var.name='occ_num_m_1', values2replace.vector = c(1,2,3,4,5,6), new.values.vector = c(1,1,0,2,2,2),newobj="emp_cat_mom_1")
+ds.table('emp_cat_mom_1') # 0=unemployed 1=employed 2=other
+### no unemployed mothers in this cohort 
+## convert to a factor variable
+ds.asFactor('emp_cat_mom_1',newobj='femp_cat_mom_0')
+ds.table('femp_cat_mom_0')
+
+ds.asNumeric("femp_cat_mom_0", newobj = "mom.empl.dich")
+ds.table('mom.empl.dich')
+ds.Boole(V1="mom.empl.dich", V2='1', Boolean.operator='==', numeric.output=TRUE, newobj="mom.emp.dich")
+ds.table('mom.emp.dich') 
+ds.asFactor('mom.emp.dich', newobj.name='f.mom.emp.dich')
+
+
+
+
+
+#re-grouping father's occupation into employed, unemployed, and other (at year 1)
+ds.asNumeric("df_2$occup_f1_.1", newobj='occ_num_f_1')
+ds.table('occ_num_f_1')
+ds.recodeValues(var.name='occ_num_f_1', values2replace.vector = c(1,2,3,4,5,6), new.values.vector = c(1,1,0,2,2,2),newobj="emp_cat_dad_1")
+ds.table('emp_cat_dad_1') # 0=unemployed 1=employed 2=other
+### no unemployed fathers in this cohort 
+## convert to a factor variable
+ds.asFactor('emp_cat_dad_1',newobj='femp_cat_dad_1')
+ds.table('femp_cat_dad_1')
+
+# convert ppd to factor
+ds.asFactor('df_2$ppd', newobj.name='f.ppd')
+
+# confirm child gestational weight in numeric
+ds.asNumeric('df_2$ga_lmp', newobj='n.ga_lmp')
+
+
+ds.dataFrame(x=c('df_2','femp_cat_mom_0', 'femp_cat_dad_1','f.mom.emp.dich','only_child', 'f.ppd', 'n.ga_lmp'), newobj='final')
+
+datashield.workspace_save(conns = conns, ws = "early_covariates")
+
+
+
+
+
+
+
