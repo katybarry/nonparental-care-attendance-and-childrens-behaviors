@@ -1,0 +1,94 @@
+library(DSMolgenisArmadillo)
+library(dsBaseClient)
+library(dsHelper)
+library(DSI)
+library(DSOpal)
+
+
+# all data descriptive statistics
+
+################## descriptive statistics for (5-6 year age range)
+ds.asNumeric("int_data_1$n.agebirth_m_y.5_7", newobj = 'age7', datasources=c.data[c("alspac","genr","eden", "elfe")])
+ds.mean("int_data_1$n.agebirth_m_y.5_7", type="splits", datasources=c.data[c("alspac","genr","eden", "elfe")])
+ds.mean("int_data_1$n.agebirth_m_y.5_7", type="combine", datasources=c.data[c("alspac","genr","eden", "elfe")])
+ds.quantileMean("age7", type='combine', datasources=c.data[c("alspac","genr","eden", "elfe")])
+ds.table("int_data_1$f.edu_m_.0.5_7", exclude='NA', datasources=c.data[c("alspac","genr","eden", "elfe")])
+#high = 1  Medium = 2Low = 3
+
+ds.asNumeric("int_data_1$n.int_pc_.5_7", newobj = 'intpc7', datasources=c.data[c("alspac","genr","eden", "elfe")])
+ds.quantileMean("intpc7", type="combine", datasources=c.data[c("alspac","eden","genr", "elfe")])
+
+ds.table("int_data_1$f.mom.emp.dich.5_7", exclude='NA', datasources=c.data[c("alspac")])
+ds.table('int_data_1$f.femp_cat_mom_0.5_7', exclude='NA', datasources=c.data[c("eden","genr", "elfe")])
+ds.table("int_data_1$f.fam_splitup.0.5_7", exclude='NA', datasources=c.data[c("alspac","eden","genr","elfe")])
+ds.table("int_data_1$f.ppd.5_7", exclude='NA', datasources=c.data[c("alspac","eden","genr","elfe")])
+ds.table("int_data_1$f.sex.5_7", exclude='NA', datasources=c.data[c("alspac","eden","genr", "elfe")])
+ds.table("int_data_1$f.only_child.5_7", exclude='NA', datasources=c.data[c("alspac","eden","genr", "elfe")])
+ds.asNumeric("int_data_1$n.birth_weight.5_7", newobj = 'bweight7', datasources=c.data[c("alspac","eden","genr", "elfe")])
+ds.quantileMean("bweight7", type='combine', datasources=c.data[c("alspac","eden","genr", "elfe")])
+ds.asNumeric("int_data_1$n.gest_week.5_7", newobj = 'gest_week7', datasources=c.data[c("alspac","eden","genr", "elfe")])
+ds.quantileMean("gest_week7", type='combine', datasources=c.data[c("alspac","eden","genr", "elfe")])
+ds.table("int_data_1$f.type_care.5_7", exclude='NA', datasources=c.data[c("alspac","eden","genr", "elfe")])
+################## descriptive statistics for (7-9 year age range)
+
+ds.asNumeric("int_data_1$n.agebirth_m_y.7_10", newobj = 'age10', datasources=c.data[c("alspac", "genr", "dnbc", "eden", "INMA")])
+ds.quantileMean("age10", type='combine', datasources=c.data[c("alspac", "genr", "dnbc", "eden", "INMA")])
+ds.mean("age10", type='combine', datasources=c.data[c("alspac", "genr", "dnbc", "eden", "INMA")])
+ds.table("int_data_1$f.edu_m_.0.7_10", exclude='NA', datasources=c.data[c("alspac", "genr", "dnbc", "eden","INMA")])
+
+#high = 1  Medium = 2Low = 3
+
+ds.asNumeric("int_data_1$n.int_pc_.7_10", newobj = 'intpc10', datasources=c.data[c("alspac", "genr", "dnbc", "eden","INMA")])
+ds.quantileMean("intpc10", type="combine", datasources=c.data[c("alspac", "genr", "dnbc", "eden","INMA")])
+
+ds.table("int_data_1$f.mom.emp.dich.7_10", exclude='NA', datasources=c.data[c("alspac")])
+ds.table('int_data_1$f.femp_cat_mom_0.7_10', exclude='NA', datasources=c.data[c( "genr", "dnbc", "eden","INMA")])
+ds.table("int_data_1$f.fam_splitup.0.7_10", exclude='NA', datasources=c.data[c("alspac", "genr", "dnbc", "eden")])
+ds.table("int_data_1$f.ppd.7_10", exclude='NA', datasources=c.data[c("alspac", "genr", "dnbc", "eden","INMA")])
+ds.table("int_data_1$f.sex.7_10", exclude='NA', datasources=c.data[c("alspac", "genr", "dnbc", "eden","INMA")])
+ds.table("int_data_1$f.only_child.7_10", exclude='NA', datasources=c.data[c("alspac", "genr", "dnbc", "eden","INMA")])
+ds.asNumeric("int_data_1$n.birth_weight.7_10", newobj = 'bweight10', datasources=c.data[c("alspac", "genr", "dnbc", "eden","INMA")])
+ds.quantileMean("bweight10", type='combine', datasources=c.data[c("alspac", "genr", "dnbc", "eden","INMA")])
+ds.asNumeric("int_data_1$n.gest_week.7_10", newobj = 'gest_week10', datasources=c.data[c("alspac", "genr", "dnbc", "eden","INMA")])
+ds.quantileMean("gest_week10", type='combine', datasources=c.data[c("alspac","eden","genr", "dnbc", "INMA")])
+ds.table("int_data_1$f.type_care.7_10", exclude='NA', datasources=c.data[c("alspac","eden","genr", "dnbc", "INMA")])
+
+################## descriptive statistics for (10-13 year age range)
+
+ds.asNumeric("int_data_1$n.agebirth_m_y.10_14", newobj = 'age13', datasources=c.data[c("alspac", "genr", "dnbc", "INMA")])
+ds.quantileMean("age13", type='combine', datasources=c.data[c("alspac", "genr", "dnbc", "INMA")])
+ds.table("int_data_1$f.edu_m_.0.10_14", exclude='NA', datasources=c.data[c("alspac", "genr", "dnbc", "INMA")])
+ds.asNumeric("int_data_1$n.int_pc_.10_14", newobj = 'intpc13', datasources=c.data[c("alspac", "genr", "dnbc", "INMA")])
+ds.quantileMean("intpc13",type='combine', datasources=c.data[c("alspac", "genr", "dnbc", "INMA")])
+
+ds.table("int_data_1$f.mom.emp.dich.10_14", exclude='NA', datasources=c.data[c("alspac")])
+ds.table('int_data_1$f.femp_cat_mom_0.10_14', exclude='NA', datasources=c.data[c("genr", "dnbc", "INMA")])
+ds.table("int_data_1$f.fam_splitup.0.10_14", exclude='NA', datasources=c.data[c("alspac", "genr", "dnbc")])
+ds.table("int_data_1$f.ppd.10_14", exclude='NA', datasources=c.data[c("INMA","alspac", "genr", "dnbc")])
+ds.table("int_data_1$f.sex.10_14", exclude='NA', datasources=c.data[c("INMA","alspac", "genr", "dnbc")])
+ds.table("int_data_1$f.only_child.10_14", exclude='NA', datasources=c.data[c("INMA","alspac", "genr", "dnbc")])
+ds.asNumeric("int_data_1$n.birth_weight.10_14", newobj = 'bweight13', datasources=c.data[c("INMA","alspac", "genr", "dnbc")])
+ds.quantileMean("bweight13", type='combine', datasources=c.data[c("alspac", "genr", "dnbc", "INMA")])
+
+ds.asNumeric("int_data_1$n.gest_week.10_14", newobj = 'gest_week13', datasources=c.data[c("INMA","alspac", "genr", "dnbc")])
+ds.quantileMean("gest_week13", type='combine', datasources=c.data[c("alspac", "genr", "dnbc", "INMA")])
+ds.table("int_data_1$f.type_care.10_14", exclude='NA', datasources=c.data[c("alspac", "genr", "dnbc", "INMA")])
+
+
+########### exposure breakdown at each bracket
+
+
+c.data <- DSI::datashield.login(logins = logindata, restore="ext_imp_strata_updated")
+
+
+
+ds.asNumeric("ext_data_1$n.ext_pc_.5_7", newobj = 'extpc7', datasources=c.data[c("alspac","genr","eden", "elfe")])
+ds.quantileMean("extpc7", type="combine", datasources=c.data[c("alspac","eden","genr", "elfe")])
+
+ds.asNumeric("ext_data_1$n.ext_pc_.7_10", newobj = 'extpc10', datasources=c.data[c("alspac", "genr", "dnbc", "eden","INMA")])
+ds.quantileMean("extpc10", type="combine", datasources=c.data[c("alspac", "genr", "dnbc", "eden","INMA")])
+
+ds.asNumeric("ext_data_1$n.ext_pc_.10_14", newobj = 'extpc13', datasources=c.data[c("alspac", "genr", "dnbc", "INMA")])
+ds.quantileMean("extpc13",type='combine', datasources=c.data[c("alspac", "genr", "dnbc", "INMA")])
+
+ds.dim("ext_data_1")
