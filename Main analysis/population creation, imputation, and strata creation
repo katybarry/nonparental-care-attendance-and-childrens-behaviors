@@ -1,0 +1,482 @@
+#load libraries
+
+c.data <- DSI::datashield.login(logins = logindata, restore="covariates")
+
+
+
+####################################################################################################
+# data management 
+####################################################################################################
+
+ds.make(toAssign="final$ga_bj/7", newobj="gest_week", datasources=c.data)
+ds.dataFrame(x=c('final','gest_week' ), newobj='final')
+
+ds.colnames('final')
+ds.dim('final')
+
+
+ds.dataFrame(x=c("final$ppd","final$gest_week","final$fam_splitup.0","final$type_care","final$age_years","final$ext_age_","final$int_age_","final$int_pc_","final$ext_pc_","final$agebirth_m_y","final$birth_weight","final$child_id","final$only_child","final$sex","final$edu_m_.0","final$femp_cat_mom_0"), check.names=TRUE, stringsAsFactors = TRUE, completeCases=FALSE, newobj="maxsample", datasources = c.data[c('eden', 'genr', 'dnbc','elfe')])
+ds.dataFrame(x=c("final$ppd","final$gest_week","final$fam_splitup.0","final$f.mom.emp.dich","final$type_care","final$age_years","final$ext_age_","final$int_age_","final$int_pc_","final$ext_pc_","final$agebirth_m_y","final$birth_weight","final$child_id","final$only_child","final$sex","final$edu_m_.0"), check.names=TRUE, stringsAsFactors = TRUE, completeCases=FALSE, newobj="maxsample", datasources = c.data[c("alspac")])
+ds.dataFrame(x=c("final$ppd","final$gest_week","final$type_care","final$age_years","final$ext_age_","final$int_age_","final$int_pc_","final$ext_pc_","final$agebirth_m_y","final$birth_weight","final$child_id","final$only_child","final$sex","final$edu_m_.0","final$femp_cat_mom_0"), check.names=TRUE, stringsAsFactors = FALSE, completeCases=FALSE, newobj="maxsample", datasources = c.data[c('INMA')])
+
+
+ds.reShape(
+  data.name = "maxsample",
+  timevar.name = "age_years",
+  idvar.name = "child_id",
+  v.names = c("int_pc_", "ext_pc_"),
+  direction = "wide", 
+  newobj = "wide_max")
+
+ds.dim('wide_max') # there are a total of 144 405 participants in the data
+
+# subset for the outcome to be between 4 and 14 years old
+
+ds.dataFrameSubset(
+  df.name = "maxsample",
+  newobj = "maxsample_el",
+  V1.name = "maxsample$age_years",
+  V2.name = "4",
+  Boolean.operator = ">", datasources = c.data
+)
+
+ds.dataFrameSubset(
+  df.name = "maxsample_el",
+  newobj = "maxsample_el",
+  V1.name = "maxsample_el$age_years",
+  V2.name = "14",
+  Boolean.operator = "<", datasources = c.data
+)
+
+
+#_____________ create wide subset
+ds.reShape(
+  data.name = "maxsample_el",
+  timevar.name = "age_years",
+  idvar.name = "child_id",
+  v.names = c("int_pc_", "ext_pc_"),
+  direction = "wide", 
+  newobj = "final_w")
+
+
+ds.dim('final_w') # a total of 105 341 participants after reducing the outcome point of measure
+ds.colnames('final_w')
+
+
+#_______________________________________________exposure
+dh.defineCases(
+  df = "maxsample_el", 
+  vars = "type_care",
+  type = "any", 
+  new_obj = "any_exp",
+  checks=FALSE,
+  conns=c.data)
+
+
+ds.length('any_exp')
+ds.table('any_exp')
+
+
+## ---- Create long subset ---------------------------------------------
+ds.dataFrameSubset(
+  df.name = "maxsample_el", 
+  V1.name = "any_exp", 
+  V2.name = "1", 
+  Boolean.operator = "==", 
+  keep.NAs = FALSE, 
+  newobj = "any_exp_l")
+
+ds.dim('any_exp_l')
+ds.colnames('any_exp_l')
+
+#______________________________________wide format subset
+ds.reShape(
+  data.name = "any_exp_l",
+  timevar.name = "age_years",
+  idvar.name = "child_id",
+  v.names = c("int_pc_", "ext_pc_"),
+  direction = "wide", 
+  newobj = "any_exp_df_w")
+
+ds.colnames('any_exp_df_w')
+ds.dim('any_exp_df_w')
+ds.table('any_exp_df_w$type_care')
+
+
+datashield.workspace_save(c.data, "exp_new")
+
+
+#______________________________________outcomes
+dh.defineCases(
+  df = "any_exp_l", 
+  vars = c("int_pc_", "ext_pc_"),
+  type = "all", 
+  new_obj = "any_out_")
+
+ds.length("any_out_")
+
+## ---- Create long subset -----------------------------------------------------
+ds.dataFrameSubset(
+  df.name = "any_exp_l", 
+  V1.name = "any_out_", 
+  V2.name = "1", 
+  Boolean.operator = "==", 
+  keep.NAs = FALSE, 
+  newobj = "any_out_df_l")
+
+#______________________________________wide format subset
+ds.reShape(
+  data.name = "any_out_df_l",
+  timevar.name = "age_years",
+  idvar.name = "child_id",
+  v.names = c("int_pc_", "ext_pc_"),
+  direction = "wide", 
+  newobj = "test")
+
+ds.dim('test')
+
+
+
+####################################################################################################
+# Look at missingness in covariates  
+####################################################################################################
+
+
+
+ds.asFactor('any_out_df_l$type_care', newobj.name='f.type_care')
+ds.asNumeric('any_out_df_l$int_age_', newobj='n.int_age_')
+ds.asNumeric('any_out_df_l$age_years', newobj='n.age_years')
+ds.asNumeric('any_out_df_l$ext_age_', newobj='n.ext_age_')
+ds.asNumeric('any_out_df_l$int_pc_', newobj='n.int_pc_')
+ds.asNumeric('any_out_df_l$ext_pc_', newobj='n.ext_pc_')
+ds.asNumeric('any_out_df_l$agebirth_m_y', newobj='n.agebirth_m_y')
+ds.asNumeric('any_out_df_l$birth_weight', newobj='n.birth_weight')
+ds.asNumeric('any_out_df_l$child_id', newobj='n.child_id')
+ds.asFactor('any_out_df_l$only_child', newobj.name='f.only_child')
+ds.asFactor('any_out_df_l$sex', newobj.name='f.sex')
+ds.asFactor('any_out_df_l$edu_m_.0', newobj.name='f.edu_m_.0')
+ds.asFactor('any_out_df_l$fam_splitup.0', newobj.name='f.fam_splitup.0', datasources = c.data[c("eden", "elfe", "dnbc", "genr", "alspac")])
+ds.asNumeric('any_out_df_l$gest_week', newobj='n.gest_week')
+ds.asFactor('any_out_df_l$ppd', newobj.name='f.ppd')
+ds.asFactor('any_out_df_l$f.mom.emp.dich', newobj.name='f.mom.emp.dich', datasources = c.data[c("alspac")])
+ds.asFactor('any_out_df_l$femp_cat_mom_0', newobj.name='f.femp_cat_mom_0', datasources = c.data[c("eden", "elfe", "dnbc", "genr", "INMA")])
+
+ds.dataFrame(x=c('f.ppd', 'n.gest_week', 'f.fam_splitup.0', 'f.type_care','n.age_years','n.ext_age_', 'n.int_age_','n.int_pc_','n.ext_pc_','n.agebirth_m_y', 'n.birth_weight', 'n.child_id', 'f.only_child', 'f.sex', 'f.edu_m_.0','f.femp_cat_mom_0'), newobj = 'comp_data', datasources=c.data[c('dnbc', 'eden', 'elfe', "genr")])
+ds.dataFrame(x=c('f.ppd', 'n.gest_week', 'f.fam_splitup.0', 'f.type_care','n.age_years','n.ext_age_', 'n.int_age_','n.int_pc_','n.ext_pc_','n.agebirth_m_y', 'n.birth_weight', 'n.child_id', 'f.only_child', 'f.sex', "f.edu_m_.0",'f.mom.emp.dich'), newobj = 'comp_data', datasources=c.data[c("alspac")])
+ds.dataFrame(x=c('f.ppd','n.gest_week', 'f.type_care','n.age_years','n.ext_age_', 'n.int_age_','n.int_pc_','n.ext_pc_','n.agebirth_m_y', 'n.birth_weight', 'n.child_id', 'f.only_child', 'f.sex', 'f.edu_m_.0','f.femp_cat_mom_0'), newobj = 'comp_data', datasources=c.data[c("INMA")])
+
+ds.dim('comp_data') # currently in long format
+ds.colnames('comp_data')
+
+datashield.workspace_save(c.data, "pre_imputation")
+
+## ---- Get stats for cat ----------------------------------------------------------------------------------
+cov.stats.cat <- dh.getStats(
+  df = "comp_data", 
+  vars = c('f.ppd', 'f.fam_splitup.0', 'f.only_child', 'f.sex', 'f.edu_m_.0','f.femp_cat_mom_0','f.mom.emp.dich','n.gest_week', 'n.agebirth_m_y', 'n.birth_weight', 'n.int_pc_', 'n.ext_pc_'))
+
+print(cov.stats.cat, n = Inf)
+
+## ---- Make table for categorical variables ---------------------------------------------------------------------------------
+cov_missing.cat <- dh.createTableOne(
+  stats = cov.stats.cat, 
+  vars = c('f.ppd', 'f.fam_splitup.0', 'f.only_child', 'f.sex', 'f.edu_m_.0','f.femp_cat_mom_0','f.mom.emp.dich'), 
+  type = "cohort", 
+  coh_direction = "cols", 
+  inc_missing = T, 
+  perc_denom = "total")
+
+print(cov.stats.cat, n = Inf, na.print = "")
+
+cov_missing.cat%>%
+  dplyr::filter(is.na(category))
+
+
+## ---- Get stats for cont----------------------------------------------------------------------------------
+cov.stats <- dh.getStats(
+  df = "comp_data", 
+  vars = c('n.gest_week', 'n.agebirth_m_y', 'n.birth_weight', 'n.int_pc_', 'n.ext_pc_'))
+
+## ---- Make table for continuous variables ---------------------------------------------------------------------------------
+cov_missing.cont <- dh.createTableOne(
+  stats = cov.stats, 
+  vars = c('n.gest_week', 'n.agebirth_m_y', 'n.birth_weight','n.int_pc_', 'n.ext_pc_'), 
+  type = "cohort", 
+  coh_direction = "cols", 
+  inc_missing = T, 
+  perc_denom = "total")
+
+cov_missing.cont
+
+cov_missing.cont%>%
+  dplyr::filter(is.na(category))
+
+
+
+#c.data <- DSI::datashield.login(logins = logindata, restore="pre_imputation")
+
+ds.reShape(
+  data.name = "comp_data",
+  timevar.name = "n.age_years",
+  idvar.name = "n.child_id",
+  v.names = c("n.int_pc_","n.ext_pc_","n.int_age_", "n.ext_age_"),
+  direction = "wide", 
+  newobj = "comp_data_w")
+
+ds.colnames('comp_data_w')
+ds.dim('comp_data_w')
+
+# CALCULATE MISSING FOR employment
+missing_percentages <- c(2.54, 12.9, 3.77, 0.15, 0.07, 3.36, 8.84)
+
+# Calculate the mean of these percentages
+global_missing <- mean(missing_percentages)
+
+# Print the global missing percentage
+print(global_missing)
+
+####################################################################################################
+#Dry run of imputation  
+####################################################################################################
+
+init = ds.mice("comp_data", maxit=0, seed = 'fixed') 
+init
+####################################################################################################
+# Define imputation model  
+####################################################################################################
+
+c.data <- DSI::datashield.login(logins = logindata, restore="pre_imputation")
+####################################################################################################
+#Dry run of imputation  
+####################################################################################################
+init = ds.mice("comp_data", maxit=0, seed = 'fixed') 
+init
+####################################################################################################
+# Define imputation model  
+####################################################################################################
+
+ds.summary('comp_data$n.int_age_')
+ds.summary('comp_data$n.ext_age_')
+ds.summary('comp_data$n.age_years')
+# r uses either or for the int_age as they are often measured at the same time
+
+## ---- Modify predictor matrix --------------------------------------------------------------------
+pred_revised <- names(c.data) %>%
+  map(function(x){
+    
+    init_mod <- init
+    init_mod[[x]][["predictorMatrix"]][,c("n.child_id", "n.age_years")] = 0 
+    return(init_mod[[x]][["predictorMatrix"]])
+    
+  }) %>% set_names(names(c.data))
+
+
+# check
+pred_revised
+init
+
+####################################################################################################
+# Do imputation  
+####################################################################################################
+imp_summary <- list(pred_revised, names(c.data)) %>%
+  pmap(
+    ~ds.mice(
+      data = "comp_data", 
+      m = 10, 
+      maxit = 5, 
+      predictorMatrix = .x,
+      seed = "fixed", 
+      newobj_df = "imputed_df",
+      newobj_mids = "imputed_mids", 
+      datasources = c.data[.y]))
+
+
+ds.dim("imputed_df.1")
+ds.colnames("imputed_df.1")
+
+imp_summary
+
+datashield.workspace_save(c.data, "imputed_data_updated")
+
+
+
+c.data <- DSI::datashield.login(logins = logindata, restore="imputed_data_updated")
+
+#-------dnbc, eden, elfe, and genr internalizing behavior strata
+int_other_stratfunc <- function(imputed_datasets_prefix, num_imputations, conns) {
+  for (i in 1:num_imputations) {
+    # Construct the name of the current imputed dataset using the provided naming convention
+    current_dataset_name <- paste(imputed_datasets_prefix, i, sep = ".")
+    
+    # Run dh.makeStrata for the current imputed dataset
+    dh.makeStrata(
+      df = current_dataset_name,
+      var_to_subset = "n.int_pc_",
+      age_var = "n.int_age_", 
+      bands = c(5, 7, 7, 10, 10, 14), 
+      mult_action = "earliest",
+      band_action = "ge_l", 
+      keep_vars = c('f.ppd', 'n.gest_week', 'f.fam_splitup.0', 'f.type_care', 'n.agebirth_m_y', 'n.birth_weight', 'f.only_child', 'f.sex', 'f.edu_m_.0','f.femp_cat_mom_0'), 
+      id_var = "n.child_id", 
+      new_obj = paste("int_data", i, sep = "_"), # To create a unique output object for each imputed dataset
+      conns = conns
+    )
+  }
+}
+
+# Example usage of the function
+int_other_stratfunc('imputed_df', 10, conns = c.data[c('dnbc', 'eden','elfe', 'genr')])
+
+# worked great!
+ds.colnames('int_data_1', datasources = c.data[c('dnbc', 'eden','elfe', 'genr')])
+ds.colnames('int_data_2', datasources = c.data[c('dnbc', 'eden','elfe', 'genr')])
+
+
+
+datashield.workspace_save(conns = c.data[c('dnbc', 'eden', 'elfe', 'genr')], ws = "int_imp_strata_updated")
+
+
+ds.table('int_data_1$f.ppd.7_10', datasources=c.data[c('dnbc', 'eden', 'genr')])
+
+#-------alspac internalizing behavior strata
+
+int_alspac_stratfunc <- function(imputed_datasets_prefix, num_imputations, conns) {
+  for (i in 1:num_imputations) {
+    # Construct the name of the current imputed dataset using the provided naming convention
+    current_dataset_name <- paste(imputed_datasets_prefix, i, sep = ".")
+    
+    # Run dh.makeStrata for the current imputed dataset
+    dh.makeStrata(
+      df = current_dataset_name,
+      var_to_subset = "n.int_pc_",
+      age_var = "n.int_age_", 
+      bands = c(5, 7, 7, 10, 10, 14), 
+      mult_action = "earliest",
+      band_action = "ge_l", 
+      keep_vars = c('f.ppd', 'n.gest_week', 'f.fam_splitup.0', 'f.type_care', 'n.agebirth_m_y', 'n.birth_weight', 'f.only_child', 'f.sex', 'f.edu_m_.0','f.mom.emp.dich'), 
+      id_var = "n.child_id", 
+      new_obj = paste("int_data", i, sep = "_"), # To create a unique output object for each imputed dataset
+      conns = conns
+    )
+  }
+}
+
+# Example usage of the function
+int_alspac_stratfunc('imputed_df', 10, conns = c.data[c('alspac')])
+
+datashield.workspace_save(conns = c.data[c('alspac')], ws = "int_imp_strata_updated")
+
+
+
+
+#-------INMA internalizing behavior strata
+int_inma_stratfunc <- function(imputed_datasets_prefix, num_imputations, conns) {
+  for (i in 1:num_imputations) {
+    # Construct the name of the current imputed dataset using the provided naming convention
+    current_dataset_name <- paste(imputed_datasets_prefix, i, sep = ".")
+    
+    # Run dh.makeStrata for the current imputed dataset
+    dh.makeStrata(
+      df = current_dataset_name,
+      var_to_subset = "n.int_pc_",
+      age_var = "n.int_age_", 
+      bands = c(5, 7, 7, 10, 10, 14), 
+      mult_action = "earliest",
+      band_action = "ge_l", 
+      keep_vars = c('f.ppd','n.gest_week', 'f.type_care', 'n.agebirth_m_y', 'n.birth_weight', 'f.only_child', 'f.sex', 'f.edu_m_.0','f.femp_cat_mom_0'), 
+      id_var = "n.child_id", 
+      new_obj = paste("int_data", i, sep = "_"), # To create a unique output object for each imputed dataset
+      conns = conns
+    )
+  }
+}
+
+# Example usage of the function
+int_inma_stratfunc('imputed_df', 10, conns = c.data[c('INMA')])
+
+datashield.workspace_save(conns = c.data[c('INMA')], ws = "int_imp_strata_updated")
+
+
+#-------dnbc, eden, elfe, and genr externalizing behavior strata
+ext_other_stratfunc <- function(imputed_datasets_prefix, num_imputations, conns) {
+  for (i in 1:num_imputations) {
+    # Construct the name of the current imputed dataset using the provided naming convention
+    current_dataset_name <- paste(imputed_datasets_prefix, i, sep = ".")
+    
+    # Run dh.makeStrata for the current imputed dataset
+    dh.makeStrata(
+      df = current_dataset_name,
+      var_to_subset = "n.ext_pc_",
+      age_var = "n.ext_age_", 
+      bands = c(5, 7, 7, 10, 10, 14), 
+      mult_action = "earliest",
+      band_action = "ge_l", 
+      keep_vars = c('f.ppd', 'n.gest_week', 'f.fam_splitup.0', 'f.type_care', 'n.agebirth_m_y', 'n.birth_weight', 'f.only_child', 'f.sex', 'f.edu_m_.0','f.femp_cat_mom_0'), 
+      id_var = "n.child_id", 
+      new_obj = paste("ext_data", i, sep = "_"), # To create a unique output object for each imputed dataset
+      conns = conns
+    )
+  }
+}
+
+# Example usage of the function
+ext_other_stratfunc('imputed_df', 10, conns = c.data[c('dnbc','eden','elfe','genr')])
+
+datashield.workspace_save(conns = c.data[c('dnbc', 'eden', 'elfe', 'genr')], ws = "ext_imp_strata_updated")
+
+
+
+#-------alspac externalizing behavior strata
+ext_alspac_stratfunc <- function(imputed_datasets_prefix, num_imputations, conns) {
+  for (i in 1:num_imputations) {
+    # Construct the name of the current imputed dataset using the provided naming convention
+    current_dataset_name <- paste(imputed_datasets_prefix, i, sep = ".")
+    
+    # Run dh.makeStrata for the current imputed dataset
+    dh.makeStrata(
+      df = current_dataset_name,
+      var_to_subset = "n.ext_pc_",
+      age_var = "n.ext_age_", 
+      bands = c(5, 7, 7, 10, 10, 14), 
+      mult_action = "earliest",
+      band_action = "ge_l", 
+      keep_vars = c('f.ppd', 'n.gest_week', 'f.fam_splitup.0', 'f.type_care', 'n.agebirth_m_y', 'n.birth_weight', 'f.only_child', 'f.sex', 'f.edu_m_.0','f.mom.emp.dich'), 
+      id_var = "n.child_id", 
+      new_obj = paste("ext_data", i, sep = "_"), # To create a unique output object for each imputed dataset
+      conns = conns
+    )
+  }
+}
+
+# Example usage of the function
+ext_alspac_stratfunc('imputed_df', 10, conns = c.data[c('alspac')])
+
+datashield.workspace_save(conns = c.data[c('alspac')], ws = "ext_imp_strata_updated")
+
+
+#-------INMA externalizing behavior strata
+ext_inma_stratfunc <- function(imputed_datasets_prefix, num_imputations, conns) {
+  for (i in 1:num_imputations) {
+    # Construct the name of the current imputed dataset using the provided naming convention
+    current_dataset_name <- paste(imputed_datasets_prefix, i, sep = ".")
+    
+    # Run dh.makeStrata for the current imputed dataset
+    dh.makeStrata(
+      df = current_dataset_name,
+      var_to_subset = "n.ext_pc_",
+      age_var = "n.ext_age_", 
+      bands = c(5, 7, 7, 10, 10, 14), 
+      mult_action = "earliest",
+      band_action = "ge_l", 
+      keep_vars = c('f.ppd','n.gest_week', 'f.type_care', 'n.agebirth_m_y', 'n.birth_weight', 'f.only_child', 'f.sex', 'f.edu_m_.0','f.femp_cat_mom_0'), 
+      id_var = "n.child_id", 
+      new_obj = paste("ext_data", i, sep = "_"), # To create a unique output object for each imputed dataset
+      conns = conns
+    )
+  }
+}
+
+# Example usage of the function
+ext_inma_stratfunc('imputed_df', 10, conns = c.data[c('INMA')])
+
+datashield.workspace_save(conns = c.data[c('INMA')], ws = "ext_imp_strata_updated")
